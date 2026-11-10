@@ -1,0 +1,4 @@
+# Alembic versions directory
+# Migration scripts are stored here.
+# Run: alembic revision --autogenerate -m "initial tables"
+# Then: alembic upgrade head

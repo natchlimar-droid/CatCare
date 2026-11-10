@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สมัครสมาชิก | Cat Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Prompt:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--orange:#FF9F43;--orange-lt:#FFF3E0;--cream:#F7F1E3;--dark:#2C3E50;--brown:#8B5E3C;--green:#A8E6CF;--pink:#FF6B9D;--shadow:0 8px 32px rgba(255,159,67,.18);--radius:18px;}
+body{font-family:'Sarabun',sans-serif;min-height:100vh;background:linear-gradient(135deg,#FFF8F0 0%,#F7F1E3 50%,#FFE4C4 100%);display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.bg-paws{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.paw{position:absolute;font-size:2rem;opacity:.06;animation:float 8s ease-in-out infinite;}
+.paw:nth-child(1){top:8%;left:6%}.paw:nth-child(2){top:30%;right:8%;animation-delay:2s;font-size:1.5rem}.paw:nth-child(3){bottom:20%;left:10%;animation-delay:4s}.paw:nth-child(4){top:60%;right:5%;animation-delay:1s;font-size:2.5rem}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-18px) rotate(5deg)}}
+.card{position:relative;z-index:1;background:rgba(255,255,255,.93);backdrop-filter:blur(20px);border-radius:24px;padding:2rem 2.4rem 2.4rem;width:100%;max-width:480px;box-shadow:var(--shadow),0 2px 0 #FFD093 inset;border:1.5px solid rgba(255,159,67,.18);}
+.mascot{text-align:center;margin-bottom:1.2rem;}
+.cat-face{font-size:4rem;display:inline-block;transition:all .3s cubic-bezier(.34,1.56,.64,1);}
+.cat-face:hover{transform:scale(1.1) rotate(-5deg);}
+.cat-mood{font-size:.82rem;color:var(--brown);font-weight:600;margin-top:.3rem;min-height:1.2rem;}
+.app-title{text-align:center;margin-bottom:1.8rem;}
+.app-title h1{font-family:'Prompt',sans-serif;font-size:1.5rem;font-weight:700;color:var(--dark);}
+.app-title h1 span{color:var(--orange);}
+.app-title p{font-size:.83rem;color:#aaa;margin-top:.2rem;}
+.steps{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:1.6rem;}
+.step{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;transition:all .3s;}
+.step.done{background:var(--orange);color:white;}.step.active{background:var(--dark);color:white;transform:scale(1.1);}.step.idle{background:#eee;color:#bbb;}
+.step-line{flex:1;height:2px;background:#eee;border-radius:1px;max-width:40px;}.step-line.done{background:var(--orange);}
+.form-step{display:none;animation:fadeUp .3s ease;}.form-step.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.field{margin-bottom:1rem;}
+.field label{display:block;font-size:.83rem;font-weight:700;color:var(--dark);margin-bottom:.4rem;}
+.req{color:var(--orange);}
+.inp-wrap{position:relative;}.inp-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+.inp{width:100%;padding:.76rem 1rem .76rem 2.6rem;border:2px solid #EDE8DF;border-radius:12px;font-family:'Sarabun',sans-serif;font-size:.93rem;color:var(--dark);background:#FFFAF4;outline:none;transition:all .22s;}
+.inp:focus{border-color:var(--orange);background:#fff;box-shadow:0 0 0 4px rgba(255,159,67,.1);}
+.inp::placeholder{color:#c5bfb5;}.inp.error{border-color:var(--pink);}.inp.ok{border-color:var(--green);}
+.field-hint{font-size:.75rem;margin-top:.3rem;}.field-hint.err{color:var(--pink);}.field-hint.ok{color:#2E7D32;}
+.gender-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.2rem;}
+.gender-btn{padding:.65rem;border:2px solid #EDE8DF;border-radius:12px;cursor:pointer;background:#fff;text-align:center;font-family:'Sarabun',sans-serif;font-size:.85rem;font-weight:600;color:#888;transition:all .2s;}
+.gender-btn.sel{border-color:var(--orange);background:var(--orange-lt);color:var(--brown);}
+.strength-bar{height:4px;border-radius:2px;margin-top:.5rem;background:#eee;overflow:hidden;}
+.strength-fill{height:100%;border-radius:2px;transition:all .4s;width:0;}
+.s-weak{background:#FF6B9D;width:25%;}.s-fair{background:#FFD93D;width:50%;}.s-good{background:#FF9F43;width:75%;}.s-strong{background:var(--green);width:100%;}
+.avatar-row{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin:.8rem 0;}
+.av-btn{width:52px;height:52px;border:2px solid #EDE8DF;border-radius:50%;cursor:pointer;background:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.av-btn.sel{border-color:var(--orange);background:var(--orange-lt);transform:scale(1.1);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.btn-row{display:flex;gap:.6rem;margin-top:1.2rem;}
+.btn-back{flex:1;padding:.8rem;border:2px solid #EDE8DF;border-radius:12px;background:#fff;cursor:pointer;font-family:'Sarabun',sans-serif;font-weight:600;font-size:.9rem;color:#888;transition:.2s;}
+.btn-back:hover{border-color:#ccc;}
+.btn-next{flex:2;padding:.8rem;border:none;border-radius:12px;cursor:pointer;font-family:'Prompt',sans-serif;font-weight:700;font-size:.95rem;color:white;background:linear-gradient(135deg,var(--orange),#FFB347);box-shadow:0 4px 14px rgba(255,159,67,.35);transition:all .25s;}
+.btn-next:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,159,67,.5);}
+.btn-next:disabled{opacity:.65;cursor:not-allowed;}
+.btn-full{width:100%;}
+.success-wrap{text-align:center;padding:1rem 0;}
+.success-icon{font-size:5rem;animation:pop .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.success-title{font-family:'Prompt',sans-serif;font-size:1.4rem;font-weight:700;color:var(--dark);margin:.8rem 0 .3rem;}
+.success-sub{font-size:.88rem;color:#999;}
+.card-footer{text-align:center;margin-top:1.2rem;font-size:.82rem;color:#aaa;}
+.card-footer a{color:var(--orange);font-weight:700;text-decoration:none;}
+.error-msg{background:#fce4ec;color:#880E4F;border-radius:10px;padding:.65rem 1rem;font-size:.82rem;margin-bottom:1rem;display:none;border-left:4px solid var(--pink);}
+.error-msg.show{display:block;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-right:6px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF9F43">
+<link rel="apple-touch-icon" href="icon.svg">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed: ', err));
+    });
+  }
+</script>
+</head>
+<body>
+
+<div class="bg-paws">
+  <div class="paw">🐾</div><div class="paw">🐾</div>
+  <div class="paw">🐾</div><div class="paw">🐾</div>
+</div>
+
+<div class="card">
+  <div class="mascot">
+    <div class="cat-face" id="catFace">🐱</div>
+    <div class="cat-mood" id="catMood">ยินดีต้อนรับสมาชิกใหม่! 🎉</div>
+  </div>
+  <div class="app-title">
+    <h1>สมัครสมาชิก <span>Cat Care</span></h1>
+    <p>สร้างบัญชีเพื่อเริ่มดูแลน้องแมวของคุณ 🐾</p>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="s1">1</div>
+    <div class="step-line" id="l1"></div>
+    <div class="step idle" id="s2">2</div>
+    <div class="step-line" id="l2"></div>
+    <div class="step idle" id="s3">🐱</div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <form id="regForm" onsubmit="return false;">
+
+    <!-- STEP 1: ข้อมูลผู้ใช้ -->
+    <div class="form-step active" id="step1">
+      <div class="field">
+        <label>ชื่อผู้ใช้ <span class="req">*</span></label>
+        <div class="inp-wrap">
+          <span class="inp-icon">😺</span>
+          <input class="inp" id="username" type="text" placeholder="เช่น natcha_catmom" autocomplete="off" oninput="validateUsername()">
+        </div>
+        <div class="field-hint" id="username-hint"></div>
+      </div>
+      <div class="field">
+        <label>อีเมล <span class="req">*</span></label>
+        <div class="inp-wrap">
+          <span class="inp-icon">📧</span>
+          <input class="inp" id="email" type="email" placeholder="your@email.com" oninput="validateEmail()">
+        </div>
+        <div class="field-hint" id="email-hint"></div>
+      </div>
+      <div class="field">
+        <label>รหัสผ่าน <span class="req">*</span></label>
+        <div class="inp-wrap">
+          <span class="inp-icon">🔒</span>
+          <input class="inp" id="password" type="password" placeholder="อย่างน้อย 8 ตัวอักษร" onfocus="setCat('shy')" onblur="setCat('idle')" oninput="checkStrength()">
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strengthBar"></div></div>
+        <div class="field-hint" id="pw-hint"></div>
+      </div>
+      <div class="field">
+        <label>ยืนยันรหัสผ่าน <span class="req">*</span></label>
+        <div class="inp-wrap">
+          <span class="inp-icon">🔏</span>
+          <input class="inp" id="confirm" type="password" placeholder="กรอกรหัสผ่านอีกครั้ง" onfocus="setCat('shy')" onblur="setCat('idle')" oninput="validateConfirm()">
+        </div>
+        <div class="field-hint" id="confirm-hint"></div>
+      </div>
+      <div class="field">
+        <label>เพศ</label>
+        <div class="gender-row">
+          <button type="button" class="gender-btn" onclick="selGender(this,'female')">👩 ผู้หญิง</button>
+          <button type="button" class="gender-btn" onclick="selGender(this,'male')">👨 ผู้ชาย</button>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn-next btn-full" onclick="goStep(2)">ถัดไป →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: โปรไฟล์แมว -->
+    <div class="form-step" id="step2">
+      <div class="field">
+        <label>ชื่อน้องแมว <span class="req">*</span></label>
+        <div class="inp-wrap">
+          <span class="inp-icon">🐱</span>
+          <input class="inp" id="catName" type="text" placeholder="เช่น น้องสามสี, มิ้ว" oninput="updateCatPreview()">
+        </div>
+      </div>
+      <div class="field">
+        <label>เลือกอวตารน้องแมว</label>
+        <div class="avatar-row" id="avatarRow">
+          <button type="button" class="av-btn sel" data-val="🐱" onclick="selAvatar(this)">🐱</button>
+          <button type="button" class="av-btn" data-val="😸" onclick="selAvatar(this)">😸</button>
+          <button type="button" class="av-btn" data-val="😺" onclick="selAvatar(this)">😺</button>
+          <button type="button" class="av-btn" data-val="🐈" onclick="selAvatar(this)">🐈</button>
+          <button type="button" class="av-btn" data-val="🐈‍⬛" onclick="selAvatar(this)">🐈‍⬛</button>
+          <button type="button" class="av-btn" data-val="🦁" onclick="selAvatar(this)">🦁</button>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>สายพันธุ์</label>
+          <div class="inp-wrap">
+            <span class="inp-icon">🏷️</span>
+            <input class="inp" id="catBreed" type="text" placeholder="เช่น Persian, Mixed">
+          </div>
+        </div>
+        <div class="field">
+          <label>เพศแมว</label>
+          <select class="inp" id="catGender" style="padding-left:1rem">
+            <option value="female">🐱 เมีย</option>
+            <option value="male">😼 ผู้</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>วันเกิด</label>
+          <div class="inp-wrap">
+            <span class="inp-icon">🎂</span>
+            <input class="inp" id="catBirth" type="date" style="padding-left:2.4rem">
+          </div>
+        </div>
+        <div class="field">
+          <label>น้ำหนักเริ่มต้น (kg)</label>
+          <div class="inp-wrap">
+            <span class="inp-icon">⚖️</span>
+            <input class="inp" id="catWeight" type="number" step="0.1" min="0.1" placeholder="4.0" style="padding-left:2.4rem">
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn-back" onclick="goStep(1)">← ย้อนกลับ</button>
+        <button type="button" class="btn-next" id="submitBtn" onclick="submitRegister()">สมัครสมาชิก 🐾</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: สำเร็จ -->
+    <div class="form-step" id="step3">
+      <div class="success-wrap">
+        <div class="success-icon" id="successIcon">🎉</div>
+        <div class="success-title">ยินดีต้อนรับ! <span id="previewCatName">น้องแมว</span></div>
+        <div class="success-sub">สร้างบัญชีสำเร็จแล้ว พร้อมเริ่มบันทึกข้อมูล 🐾</div>
+        <br>
+        <button type="button" class="btn-next btn-full" onclick="window.location.href='dashboard.html'">เข้าสู่ระบบเลย 🐱</button>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="card-footer" id="regFooter">
+    มีบัญชีอยู่แล้ว? <a href="login.html">เข้าสู่ระบบ</a>
+  </div>
+</div>
+
+<script>
+const API = 'http://127.0.0.1:8000';
+let currentStep = 1, selectedGender = '', selectedAvatar = '🐱';
+
+const MOODS = {
+  idle:  {face:'🐱', mood:'ยินดีต้อนรับสมาชิกใหม่! 🎉'},
+  typing:{face:'😸', mood:'กรอกข้อมูลให้ครบนะ~ 📝'},
+  shy:   {face:'🙈', mood:'ปิดตาไม่ดูรหัสผ่านนะ... 🫣'},
+  done:  {face:'🎊', mood:'เยี่ยมมาก! เกือบเสร็จแล้ว ✨'},
+};
+function setCat(s){ const m=MOODS[s]||MOODS.idle; document.getElementById('catFace').textContent=m.face; document.getElementById('catMood').textContent=m.mood; }
+document.querySelectorAll('.inp').forEach(inp=>{
+  inp.addEventListener('focus',()=>{if(inp.type!=='password')setCat('typing');});
+  inp.addEventListener('blur', ()=>{if(inp.type!=='password')setCat('idle');});
+});
+
+function validateUsername(){
+  const v=document.getElementById('username').value;
+  const el=document.getElementById('username-hint'), inp=document.getElementById('username');
+  if(v.length<3){el.className='field-hint err';el.textContent='⚠️ ต้องมีอย่างน้อย 3 ตัวอักษร';inp.className='inp error';}
+  else if(/[^a-zA-Z0-9_]/.test(v)){el.className='field-hint err';el.textContent='⚠️ ใช้ได้เฉพาะ a-z, 0-9, _';inp.className='inp error';}
+  else{el.className='field-hint ok';el.textContent='✅ ชื่อผู้ใช้ใช้ได้';inp.className='inp ok';}
+}
+function validateEmail(){
+  const v=document.getElementById('email').value, el=document.getElementById('email-hint'), inp=document.getElementById('email');
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){el.className='field-hint ok';el.textContent='✅ อีเมลถูกต้อง';inp.className='inp ok';}
+  else{el.className='field-hint err';el.textContent='⚠️ รูปแบบอีเมลไม่ถูกต้อง';inp.className='inp error';}
+}
+function checkStrength(){
+  const p=document.getElementById('password').value, bar=document.getElementById('strengthBar'), hint=document.getElementById('pw-hint');
+  bar.className='strength-fill';
+  if(!p){bar.style.width='0';hint.textContent='';return;}
+  let score=0;
+  if(p.length>=8)score++;if(/[A-Z]/.test(p))score++;if(/[0-9]/.test(p))score++;if(/[^A-Za-z0-9]/.test(p))score++;
+  const levels=[['s-weak','⚠️ อ่อนมาก'],['s-fair','😐 พอใช้'],['s-good','👍 ดี'],['s-strong','💪 แข็งแกร่ง']];
+  const [cls,txt]=levels[score-1]||levels[0];
+  bar.classList.add(cls); hint.className='field-hint'; hint.textContent=txt;
+}
+function validateConfirm(){
+  const p=document.getElementById('password').value, c=document.getElementById('confirm').value;
+  const el=document.getElementById('confirm-hint'), inp=document.getElementById('confirm');
+  if(c===''||p===c){el.className='field-hint ok';el.textContent=c?'✅ รหัสผ่านตรงกัน':'';inp.className=c?'inp ok':'inp';}
+  else{el.className='field-hint err';el.textContent='❌ รหัสผ่านไม่ตรงกัน';inp.className='inp error';}
+}
+function selGender(el,val){ document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); selectedGender=val; }
+function selAvatar(el){ document.querySelectorAll('.av-btn').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); selectedAvatar=el.dataset.val; document.getElementById('catFace').textContent=selectedAvatar; }
+function updateCatPreview(){ const n=document.getElementById('catName').value||'น้องแมว'; document.getElementById('catMood').textContent=n+' ยินดีที่รู้จัก! 🐾'; }
+
+function showError(msg){ const el=document.getElementById('errorMsg'); el.textContent=msg; el.classList.add('show'); }
+function hideError(){ document.getElementById('errorMsg').classList.remove('show'); }
+
+function goStep(n){
+  hideError();
+  if(n===2){
+    const u=document.getElementById('username').value, e=document.getElementById('email').value;
+    const p=document.getElementById('password').value, c=document.getElementById('confirm').value;
+    if(u.length<3){validateUsername();return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){validateEmail();return;}
+    if(p.length<8){document.getElementById('pw-hint').textContent='⚠️ รหัสผ่านต้องมีอย่างน้อย 8 ตัว';return;}
+    if(p!==c){validateConfirm();return;}
+    setCat('done');
+  }
+  document.getElementById('step'+currentStep).classList.remove('active');
+  document.getElementById('step'+n).classList.add('active');
+  for(let i=1;i<=3;i++){
+    document.getElementById('s'+i).className='step '+(i<n?'done':i===n?'active':'idle');
+    if(i<3) document.getElementById('l'+i).className='step-line'+(i<n?' done':'');
+  }
+  currentStep=n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function submitRegister() {
+  hideError();
+  const catName = document.getElementById('catName').value.trim();
+  if (!catName) { showError('กรุณากรอกชื่อน้องแมว'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>กำลังสมัคร...';
+
+  try {
+    // 1. สมัครสมาชิก
+    const regRes = await fetch(`${API}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username:     document.getElementById('username').value.trim(),
+        email:        document.getElementById('email').value.trim(),
+        password:     document.getElementById('password').value,
+        display_name: document.getElementById('username').value.trim(),
+        gender:       selectedGender || null,
+      }),
+    });
+    const regData = await regRes.json();
+    if (!regRes.ok) { showError(regData.detail || 'สมัครสมาชิกไม่สำเร็จ'); btn.disabled=false; btn.textContent='สมัครสมาชิก 🐾'; return; }
+
+    // บันทึก token
+    sessionStorage.setItem('cc_token',        regData.access_token);
+    sessionStorage.setItem('cc_user_id',      regData.user_id);
+    sessionStorage.setItem('cc_username',     regData.username);
+    sessionStorage.setItem('cc_display_name', regData.display_name);
+
+    // 2. สร้างโปรไฟล์แมว
+    const catRes = await fetch(`${API}/cats/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${regData.access_token}` },
+      body: JSON.stringify({
+        name:       catName,
+        breed:      document.getElementById('catBreed').value || null,
+        gender:     document.getElementById('catGender').value,
+        birth_date: document.getElementById('catBirth').value || null,
+        weight_kg:  parseFloat(document.getElementById('catWeight').value) || null,
+      }),
+    });
+
+    // 3. แสดง success
+    document.getElementById('previewCatName').textContent = catName;
+    document.getElementById('successIcon').textContent = selectedAvatar;
+    document.getElementById('catFace').textContent = '🎊';
+    document.getElementById('catMood').textContent = 'สมัครสำเร็จ! ยินดีต้อนรับ 🎉';
+    document.getElementById('regFooter').style.display = 'none';
+    goStep(3);
+
+  } catch (err) {
+    showError('เกิดข้อผิดพลาด: ' + err.toString());
+    btn.disabled = false;
+    btn.textContent = 'สมัครสมาชิก 🐾';
+  }
+}
+</script>
+</body>
+</html>

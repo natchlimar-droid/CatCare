@@ -1,0 +1,50 @@
+# ─────────────────────────────────────────────
+# Environment variables and secrets (NEVER commit to GitHub)
+# ─────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─────────────────────────────────────────────
+# Python Virtual Environments & Packages
+# ─────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# ─────────────────────────────────────────────
+# Database backups & local dumps
+# ─────────────────────────────────────────────
+*.dump
+*.tar
+*.bak
+*.sqlite
+*.sqlite3
+
+# Ignore general .sql files, but keep schema/setup files
+*.sql
+!setup_pgadmin.sql
+!schema.sql
+!mock_data.sql
+!seeds/*.sql
+
+# ─────────────────────────────────────────────
+# IDEs and Operating System
+# ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+

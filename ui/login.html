@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cat Care — เข้าสู่ระบบ</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Prompt:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    :root {
+      --cream: #36dada;
+      --orange: #FF9F43;
+      --orange-lt: #FFF3E0;
+      --dark: #81177c;
+      --brown: #5de2b6;
+      --pink: #FF6B9D;
+      --green: #A8E6CF;
+      --shadow: 0 8px 32px rgba(255, 159, 67, .18);
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #FFF8F0 0%, #F7F1E3 50%, #FFE4C4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .bg-paws {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .paw {
+      position: absolute;
+      font-size: 2rem;
+      opacity: .06;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .paw:nth-child(1) {
+      top: 10%;
+      left: 8%;
+      animation-delay: 0s
+    }
+
+    .paw:nth-child(2) {
+      top: 25%;
+      right: 12%;
+      animation-delay: 1.5s;
+      font-size: 1.4rem
+    }
+
+    .paw:nth-child(3) {
+      top: 60%;
+      left: 5%;
+      animation-delay: 3s;
+      font-size: 2.5rem
+    }
+
+    .paw:nth-child(4) {
+      bottom: 15%;
+      right: 8%;
+      animation-delay: 4.5s
+    }
+
+    .paw:nth-child(5) {
+      top: 80%;
+      left: 30%;
+      animation-delay: 2s;
+      font-size: 1.2rem
+    }
+
+    .paw:nth-child(6) {
+      top: 40%;
+      right: 4%;
+      animation-delay: 6s;
+      font-size: 1.8rem
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-5deg)
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(5deg)
+      }
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      padding: 2.5rem 2.8rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow), 0 2px 0 #FFD093 inset;
+      border: 1.5px solid rgba(255, 159, 67, .2);
+    }
+
+    .mascot-wrap {
+      text-align: center;
+      margin-bottom: 1.4rem;
+      position: relative;
+    }
+
+    .cat-face {
+      font-size: 5rem;
+      line-height: 1;
+      display: inline-block;
+      transition: all .3s cubic-bezier(.34, 1.56, .64, 1);
+      filter: drop-shadow(0 4px 12px rgba(255, 159, 67, .3));
+      cursor: default;
+    }
+
+    .cat-face:hover {
+      transform: scale(1.08) rotate(-3deg);
+    }
+
+    .cat-face.shy {
+      transform: scale(1.05);
+      animation: shy-wiggle .4s ease;
+    }
+
+    @keyframes shy-wiggle {
+
+      0%,
+      100% {
+        transform: scale(1.05) rotate(0)
+      }
+
+      30% {
+        transform: scale(1.05) rotate(-4deg)
+      }
+
+      70% {
+        transform: scale(1.05) rotate(4deg)
+      }
+    }
+
+    .cat-mood {
+      font-size: .82rem;
+      color: var(--brown);
+      font-weight: 600;
+      margin-top: .4rem;
+      letter-spacing: .3px;
+      min-height: 1.2rem;
+      transition: all .3s;
+    }
+
+    .app-title {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .app-title h1 {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.6rem;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .app-title h1 span {
+      color: var(--orange);
+    }
+
+    .app-title p {
+      font-size: .85rem;
+      color: #999;
+      margin-top: .2rem;
+    }
+
+    .field {
+      margin-bottom: 1.2rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: .45rem;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      padding: .82rem 1rem .82rem 2.8rem;
+      border: 2px solid #EDE8DF;
+      border-radius: 14px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .95rem;
+      color: var(--dark);
+      background: #FFFAF4;
+      outline: none;
+      transition: all .25s;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--orange);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(255, 159, 67, .12);
+    }
+
+    .input-wrap input::placeholder {
+      color: #c5bfb5;
+    }
+
+    .input-wrap input.error {
+      border-color: var(--pink);
+    }
+
+    .row-opt {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.4rem;
+      font-size: .83rem;
+    }
+
+    .row-opt label {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      color: #777;
+      cursor: pointer;
+    }
+
+    .row-opt a {
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .row-opt a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: .9rem;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--orange), #FFB347);
+      color: white;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(255, 159, 67, .4);
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-login:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 159, 67, .5);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-login:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 1.2rem 0;
+      color: #ccc;
+      font-size: .8rem;
+      position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: #eee;
+    }
+
+    .divider::before {
+      left: 0
+    }
+
+    .divider::after {
+      right: 0;
+    }
+
+    .card-footer {
+      text-align: center;
+      margin-top: 1.4rem;
+      font-size: .8rem;
+      color: #aaa;
+    }
+
+    .error-msg {
+      background: #fce4ec;
+      color: #880E4F;
+      border-radius: 10px;
+      padding: .65rem 1rem;
+      font-size: .82rem;
+      margin-bottom: 1rem;
+      display: none;
+      border-left: 4px solid var(--pink);
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, .4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FF9F43">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed: ', err));
+      });
+    }
+  </script>
+</head>
+
+<body>
+
+  <div class="bg-paws">
+    <div class="paw">🐾</div>
+    <div class="paw">🐾</div>
+    <div class="paw">🐾</div>
+    <div class="paw">🐾</div>
+    <div class="paw">🐾</div>
+    <div class="paw">🐾</div>
+  </div>
+
+  <div class="card">
+    <div class="mascot-wrap">
+      <div class="cat-face" id="catFace">🐱</div>
+      <div class="cat-mood" id="catMood">ยินดีต้อนรับกลับมา! 🌟</div>
+    </div>
+    <div class="app-title">
+      <h1>Cat <span>Care</span> 🐾</h1>
+      <p>Operations &amp; Analytics</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="field">
+        <label for="username">ชื่อผู้ใช้งาน</label>
+        <div class="input-wrap">
+          <span class="icon">😺</span>
+          <input type="text" id="username" placeholder="กรอกชื่อผู้ใช้" autocomplete="username"
+            onfocus="setCatMood('typing')" onblur="setCatMood('idle')">
+        </div>
+      </div>
+      <div class="field">
+        <label for="password">รหัสผ่าน</label>
+        <div class="input-wrap">
+          <span class="icon">🔒</span>
+          <input type="password" id="password" placeholder="กรอกรหัสผ่าน" onfocus="setCatMood('shy')"
+            onblur="setCatMood('idle')">
+        </div>
+      </div>
+      <div class="row-opt">
+        <label><input type="checkbox" id="rememberMe"> จำฉันไว้</label>
+        <a href="#">ลืมรหัสผ่าน?</a>
+      </div>
+      <button type="submit" class="btn-login" id="loginBtn">เข้าสู่ระบบ 🐾</button>
+    </form>
+
+    <div class="divider">หรือ</div>
+    <a href="register.html"
+      style="display:block;text-align:center;padding:.8rem;border:2px solid rgba(255,159,67,.35);border-radius:14px;color:#FF9F43;font-family:'Prompt',sans-serif;font-weight:700;font-size:.92rem;text-decoration:none;transition:all .25s;"
+      onmouseover="this.style.background='#FFF3E0'" onmouseout="this.style.background='transparent'">✨
+      สมัครสมาชิกใหม่</a>
+    <div class="card-footer">ยังไม่มีบัญชี? <a href="register.html"
+        style="color:var(--orange);font-weight:700;text-decoration:none">สมัครสมาชิกฟรี 🐾</a></div>
+  </div>
+
+  <script>
+    const API = 'http://127.0.0.1:8000';
+
+    const CAT_STATES = {
+      idle: { face: '🐱', mood: 'ยินดีต้อนรับกลับมา! 🌟' },
+      typing: { face: '😸', mood: 'ยินดีเจอคุณอีกครั้ง! 🎉' },
+      shy: { face: '🙈', mood: 'ปิดตาไม่ดูรหัสผ่านนะ... 🫣' },
+      success: { face: '😺', mood: 'เย้! เข้าสู่ระบบสำเร็จ 🎊' },
+      error: { face: '🙀', mood: 'อ๊ะ! ข้อมูลไม่ถูกต้อง ลองใหม่นะ 😿' },
+    };
+
+    function setCatMood(state) {
+      const s = CAT_STATES[state] || CAT_STATES.idle;
+      document.getElementById('catFace').textContent = s.face;
+      document.getElementById('catMood').textContent = s.mood;
+      document.getElementById('catFace').className = 'cat-face' + (state === 'shy' ? ' shy' : '');
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+    function hideError() {
+      document.getElementById('errorMsg').classList.remove('show');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      hideError();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      if (!username || !password) { showError('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน'); return; }
+
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>กำลังเข้าสู่ระบบ...';
+
+      try {
+        // OAuth2 password form requires form-encoded body
+        const body = new URLSearchParams({ username, password });
+        const res = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString(),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          setCatMood('error');
+          showError(data.detail || 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+          btn.disabled = false;
+          btn.textContent = 'เข้าสู่ระบบ 🐾';
+          return;
+        }
+
+        // บันทึก token
+        const storage = document.getElementById('rememberMe').checked ? localStorage : sessionStorage;
+        storage.setItem('cc_token', data.access_token);
+        storage.setItem('cc_user_id', data.user_id);
+        storage.setItem('cc_username', data.username);
+        storage.setItem('cc_display_name', data.display_name || data.username);
+
+        setCatMood('success');
+        btn.textContent = '✅ เข้าสู่ระบบสำเร็จ!';
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+
+      } catch (err) {
+        setCatMood('error');
+        showError('ไม่สามารถเชื่อมต่อ server ได้ — ตรวจสอบว่า API กำลังรันอยู่ที่ localhost:8000');
+        btn.disabled = false;
+        btn.textContent = 'เข้าสู่ระบบ 🐾';
+      }
+    }
+
+    // Auto-redirect ถ้า login แล้ว
+    const token = localStorage.getItem('cc_token') || sessionStorage.getItem('cc_token');
+    if (token) window.location.href = 'dashboard.html';
+  </script>
+</body>
+
+</html>
