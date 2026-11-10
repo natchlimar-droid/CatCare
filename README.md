@@ -134,7 +134,7 @@ erDiagram
 
 ### 1. โคลน Repository และสร้าง Virtual Environment
 ```bash
-git clone https://github.com/<your-username>/CatCare.git
+git clone https://github.com/natchlimar-droid/CatCare.git
 cd CatCare
 
 python -m venv .venv

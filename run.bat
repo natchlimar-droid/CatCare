@@ -43,20 +43,22 @@ echo.
 echo ============================================================
 echo   Select what to run:
 echo   [1] Streamlit Dashboard  (http://localhost:8501)
-echo   [2] FastAPI Backend      (http://localhost:8000)
+echo   [2] FastAPI Backend      (http://localhost:8080)
 echo   [3] Setup Database       (first time only)
 echo   [4] Alembic Migration
-echo   [5] Exit
+echo   [5] Seed Mockup Data     (load demo cats, expenses & reminders)
+echo   [6] Exit
 echo ============================================================
 echo.
 
-set /p choice="Enter number (1-5): "
+set /p choice="Enter number (1-6): "
 
 if "%choice%"=="1" goto :streamlit
 if "%choice%"=="2" goto :fastapi
 if "%choice%"=="3" goto :setup_db
 if "%choice%"=="4" goto :migrate
-if "%choice%"=="5" goto :end
+if "%choice%"=="5" goto :seed_data
+if "%choice%"=="6" goto :end
 echo [WARN] Invalid choice
 goto :end
 
@@ -71,10 +73,10 @@ goto :end
 :fastapi
 echo.
 echo [INFO] Starting FastAPI Backend...
-echo [INFO] URL:  http://localhost:8000
-echo [INFO] Docs: http://localhost:8000/docs
+echo [INFO] URL:  http://localhost:8080
+echo [INFO] Docs: http://localhost:8080/docs
 echo.
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 goto :end
 
 :setup_db
@@ -95,7 +97,14 @@ echo [OK] Migration complete
 pause
 goto :end
 
+:seed_data
+echo.
+echo [INFO] Seeding Mockup Data...
+python seed_data.py
+echo [OK] Done!
+pause
+goto :end
+
 :end
 echo.
 echo Goodbye!
-pause
