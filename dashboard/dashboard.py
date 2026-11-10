@@ -11,11 +11,16 @@ import plotly.graph_objects as go
 from datetime import date, timedelta
 import random, sys, os
 
-sys.path.insert(0, os.path.dirname(__file__))
+_dash_dir = os.path.dirname(__file__)
+_project_dir = os.path.abspath(os.path.join(_dash_dir, ".."))
+for _p in (_dash_dir, _project_dir):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 from db_queries import (
     is_db_available, get_all_cats, get_expense_summary_by_month,
     get_expense_kpi, get_weight_food_trend, get_latest_weight,
 )
+from app.feline_health import estimate_feline_bcs, calculate_energy_needs, get_breed_info
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(page_title="📊 Analytics | Cat Care", page_icon="📊",
@@ -81,6 +86,16 @@ DB_LIVE = is_db_available()
 # ─── Sidebar ──────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.title("🐱 Cat Care")
+
+    # User Profile / Login status in sidebar
+    user = st.session_state.get("user")
+    if user:
+        st.markdown(f"👤 **{user['display_name']}**")
+        st.caption(f"@{user['username']} · เข้าสู่ระบบแล้ว")
+    else:
+        st.caption("🔒 ยังไม่ได้เข้าสู่ระบบ")
+        if st.button("🔐 ไปที่หน้า Login", use_container_width=True):
+            st.switch_page("pages/0_🔐_Login.py")
     st.markdown("---")
     if DB_LIVE:
         cats_df = get_all_cats()
@@ -213,3 +228,122 @@ with st.expander("🔍 วิเคราะห์ความสัมพัน
                 st.error("❗ ความสัมพันธ์เป็นลบ — ควรปรึกษาสัตวแพทย์")
     else:
         st.info("ต้องการข้อมูลอย่างน้อย 3 วันเพื่อคำนวณ Correlation")
+
+# ─── Feline BMI, Body Condition Score (BCS) & Nutrition Intelligence ──────────
+st.markdown("---")
+st.subheader("🩺 การวิเคราะห์ดัชนีมวลกายสัตว์เลี้ยง & โภชนาการ (Feline BMI & BCS)")
+st.caption("อ้างอิงเกณฑ์ประเมินสรีระแมวสากล Body Condition Score (WSAVA / AAHA Guidelines 1-9 Scale)")
+
+# หาข้อมูลแมวตัวที่เลือก
+cur_cat_name = selected_cat if selected_cat != "ทั้งหมด" else (cats_df["name"].iloc[0] if not cats_df.empty else "น้องสามสี")
+cat_row = cats_df[cats_df["name"] == cur_cat_name] if not cats_df.empty else pd.DataFrame()
+
+cur_breed = cat_row["breed"].iloc[0] if not cat_row.empty and pd.notna(cat_row["breed"].iloc[0]) else "Scottish Fold"
+cur_gender = cat_row["gender"].iloc[0] if not cat_row.empty and pd.notna(cat_row["gender"].iloc[0]) else "male"
+cur_weight = latest_w if latest_w else 4.5
+
+# คำนวณ BCS และความต้องการพลังงาน
+bcs_info = estimate_feline_bcs(cur_weight, cur_breed, cur_gender)
+energy_info = calculate_energy_needs(cur_weight, bcs_info["bcs"])
+
+col_gauge, col_details = st.columns([1, 1.4])
+
+with col_gauge:
+    # Plotly Gauge Chart สำหรับ BCS 1-9
+    fig_gauge = go.Figure(go.Indicator(
+        mode="gauge+number",
+        value=bcs_info["bcs"],
+        domain={'x': [0, 1], 'y': [0, 1]},
+        title={'text': f"<b>คะแนน BCS: {bcs_info['bcs']} / 9</b><br><span style='font-size:0.85em;color:{bcs_info['color']}'>{bcs_info['status']}</span>", 'font': {'size': 18, 'color': '#2C3E50'}},
+        gauge={
+            'axis': {'range': [1, 9], 'tickwidth': 1, 'tickcolor': "#2C3E50", 'tickmode': 'linear', 'tick0': 1, 'dtick': 1},
+            'bar': {'color': bcs_info['color'], 'thickness': 0.3},
+            'bgcolor': "white",
+            'borderwidth': 2,
+            'bordercolor': "#ddd",
+            'steps': [
+                {'range': [1, 3.5], 'color': 'rgba(52, 152, 219, 0.25)'},    # ผอม (Blue)
+                {'range': [3.5, 5.5], 'color': 'rgba(46, 204, 113, 0.35)'},   # สมส่วน (Green)
+                {'range': [5.5, 7.5], 'color': 'rgba(241, 196, 15, 0.3)'},    # ท้วม (Yellow)
+                {'range': [7.5, 9.0], 'color': 'rgba(231, 76, 60, 0.3)'},     # อ้วน (Red)
+            ],
+            'threshold': {
+                'line': {'color': "#2C3E50", 'width': 4},
+                'thickness': 0.75,
+                'value': bcs_info['bcs']
+            }
+        }
+    ))
+    fig_gauge.update_layout(
+        height=320,
+        margin=dict(l=25, r=25, t=50, b=20),
+        paper_bgcolor="rgba(0,0,0,0)",
+        font={'family': "Sarabun, sans-serif"}
+    )
+    st.plotly_chart(fig_gauge, use_container_width=True)
+
+with col_details:
+    st.markdown(f"""<div style="background:white;border-radius:14px;padding:1.2rem;box-shadow:0 3px 12px rgba(0,0,0,0.05);border-left:5px solid {bcs_info['color']};margin-top:10px">
+<h4 style="margin:0 0 8px;color:#2C3E50">📋 ผลการวินิจฉัยสรีระ: {cur_cat_name}</h4>
+<p style="margin:4px 0;font-size:0.92rem">🧬 <b>สายพันธุ์:</b> {bcs_info['breed_name']} ({cur_breed})</p>
+<p style="margin:4px 0;font-size:0.92rem">⚖️ <b>น้ำหนักปัจจุบัน:</b> <span style="font-weight:700;color:{bcs_info['color']}">{cur_weight:.2f} kg</span></p>
+<p style="margin:4px 0;font-size:0.92rem">🎯 <b>ช่วงน้ำหนักมาตรฐานสายพันธุ์:</b> <b>{bcs_info['ideal_min']:.2f} – {bcs_info['ideal_max']:.2f} kg</b> (ค่าเฉลี่ย {bcs_info['ideal_mid']:.2f} kg)</p>
+<p style="margin:4px 0;font-size:0.92rem">📊 <b>ส่วนต่างจากน้ำหนักอุดมคติ:</b> {'+' if bcs_info['diff_kg'] > 0 else ''}{bcs_info['diff_kg']} kg ({'+' if bcs_info['diff_pct'] > 0 else ''}{bcs_info['diff_pct']}%)</p>
+<hr style="margin:10px 0;border:none;border-top:1px dashed #eee">
+<p style="margin:0;font-size:0.85rem;color:#666">💡 <i>{bcs_info['description']}</i></p>
+</div>""", unsafe_allow_html=True)
+
+# ─── Daily Nutrition Advisor Cards ───
+st.markdown("#### 🍽️ ปริมาณพลังงานและอาหารที่แนะนำต่อวัน (Nutrition Advisor)")
+st.caption("คำนวณตามหลักสัตวแพทย์: RER (Resting Energy) & DER (Daily Energy Requirement)")
+
+c_n1, c_n2, c_n3, c_n4 = st.columns(4)
+c_n1.metric("🔥 พลังงานพักผ่อน (RER)", f"{energy_info['rer_kcal']:.1f} kcal", help="พลังงานขั้นต่ำที่ใช้ในการดำรงชีวิตขณะพักผ่อน")
+c_n2.metric("⚡ พลังงานที่ต้องการ (DER)", f"{energy_info['der_kcal']:.1f} kcal", f"Factor {energy_info['factor']}x ({energy_info['goal']})")
+c_n3.metric("🥣 อาหารเม็ดแนะนำ", f"{energy_info['dry_food_g']:.0f} กรัม/วัน", "~380 kcal/100g")
+c_n4.metric("🥫 อาหารเปียกแนะนำ", f"{energy_info['wet_food_g']:.0f} กรัม/วัน", "~85 kcal/ซอง")
+
+# ─── Chart 3: Weight Trend with Healthy Corridor Tunnel ───
+st.markdown("#### 📉 แนวโน้มน้ำหนักเทียบกับ Safe Healthy Corridor")
+st.caption("เส้นกราฟแสดงน้ำหนักจริงเทียบกับแถบสีเขียวที่เป็นช่วงน้ำหนักสุขภาพดีตามสายพันธุ์")
+
+if not wf_df.empty:
+    wf_dates = wf_df["date"]
+    fig_corridor = go.Figure()
+
+    # แถบพื้นที่ Healthy Range (Shaded Corridor)
+    fig_corridor.add_trace(go.Scatter(
+        x=pd.concat([wf_dates, wf_dates[::-1]]),
+        y=[bcs_info['ideal_max']] * len(wf_dates) + [bcs_info['ideal_min']] * len(wf_dates),
+        fill='toself',
+        fillcolor='rgba(46, 204, 113, 0.15)',
+        line=dict(color='rgba(255,255,255,0)'),
+        hoverinfo="skip",
+        showlegend=True,
+        name="Healthy Weight Corridor (ช่วงสุขภาพดี)"
+    ))
+
+    # เส้นน้ำหนักจริง
+    fig_corridor.add_trace(go.Scatter(
+        x=wf_dates,
+        y=wf_df["avg_weight_kg"],
+        mode='lines+markers',
+        name='น้ำหนักจริง (kg)',
+        line=dict(color='#2C3E50', width=3),
+        marker=dict(size=7, color=bcs_info['color'])
+    ))
+
+    fig_corridor.update_layout(
+        template="plotly_white",
+        height=350,
+        xaxis=dict(title="วันที่", showgrid=False),
+        yaxis=dict(
+            title="น้ำหนัก (kg)",
+            range=[max(1.0, bcs_info['ideal_min'] - 1.0), bcs_info['ideal_max'] + 1.2]
+        ),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        margin=dict(t=10, b=40),
+        plot_bgcolor="#FFFAF4",
+        paper_bgcolor="rgba(0,0,0,0)"
+    )
+    st.plotly_chart(fig_corridor, use_container_width=True)

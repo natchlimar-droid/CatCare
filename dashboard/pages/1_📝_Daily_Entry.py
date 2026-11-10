@@ -9,6 +9,16 @@ import streamlit as st
 import pandas as pd
 from datetime import date, datetime, timedelta
 import random
+import os, sys
+
+_pages_dir   = os.path.dirname(__file__)     # dashboard/pages/
+_dash_dir    = os.path.dirname(_pages_dir)   # dashboard/
+_project_dir = os.path.dirname(_dash_dir)    # CatCare/
+for _p in (_dash_dir, _project_dir):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from db_queries import is_db_available, get_upcoming_reminders
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -327,20 +337,18 @@ def dialog_weight_litter():
 
 # ─── Cat Profile Header ───────────────────────────────────────────────────────
 today_str = date.today().strftime("%A, %d %B %Y")
-st.markdown(f"""
-<div class="cat-header">
-    <div class="cat-avatar">🐱</div>
-    <div class="cat-info">
-        <h2>น้องสามสี 🐾</h2>
-        <p>Mixed Breed · เพศเมีย · 2 ปี 3 เดือน</p>
-        <div>
-            <span class="cat-badge">⚖️ 4.35 kg</span>
-            <span class="cat-badge">📅 {date.today().strftime("%d/%m/%Y")}</span>
-            <span class="cat-badge">💉 วัคซีนครบ</span>
-        </div>
-    </div>
+st.markdown(f"""<div class="cat-header">
+<div class="cat-avatar">🐱</div>
+<div class="cat-info">
+<h2>น้องสามสี 🐾</h2>
+<p>Mixed Breed · เพศเมีย · 2 ปี 3 เดือน</p>
+<div>
+<span class="cat-badge">⚖️ 4.35 kg</span>
+<span class="cat-badge">📅 {date.today().strftime("%d/%m/%Y")}</span>
+<span class="cat-badge">💉 วัคซีนครบ</span>
 </div>
-""", unsafe_allow_html=True)
+</div>
+</div>""", unsafe_allow_html=True)
 
 # ─── Quick Action Buttons ─────────────────────────────────────────────────────
 st.markdown('<div class="section-title">⚡ บันทึกด่วน</div>', unsafe_allow_html=True)
@@ -348,74 +356,118 @@ st.markdown('<div class="section-title">⚡ บันทึกด่วน</div>
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("""
-    <div class="action-btn btn-food">
-        <div class="btn-icon">🍽️</div>
-        <div class="btn-label">บันทึกการกิน</div>
-        <div class="btn-sub">อาหาร / ขนม / น้ำ</div>
-    </div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="action-btn btn-food">
+<div class="btn-icon">🍽️</div>
+<div class="btn-label">บันทึกการกิน</div>
+<div class="btn-sub">อาหาร / ขนม / น้ำ</div>
+</div>""", unsafe_allow_html=True)
     if st.button("➕ กินอาหาร", key="btn_eat", use_container_width=True):
         dialog_eating()
 
 with col2:
-    st.markdown("""
-    <div class="action-btn btn-expense">
-        <div class="btn-icon">💸</div>
-        <div class="btn-label">บันทึกค่าใช้จ่าย</div>
-        <div class="btn-sub">อาหาร / หมอ / ทราย</div>
-    </div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="action-btn btn-expense">
+<div class="btn-icon">💸</div>
+<div class="btn-label">บันทึกค่าใช้จ่าย</div>
+<div class="btn-sub">อาหาร / หมอ / ทราย</div>
+</div>""", unsafe_allow_html=True)
     if st.button("➕ ค่าใช้จ่าย", key="btn_expense", use_container_width=True):
         dialog_expense()
 
 with col3:
-    st.markdown("""
-    <div class="action-btn btn-weight">
-        <div class="btn-icon">⚖️</div>
-        <div class="btn-label">น้ำหนัก / ขับถ่าย</div>
-        <div class="btn-sub">ชั่งน้ำหนัก / เช็กกระบะ</div>
-    </div>""", unsafe_allow_html=True)
+    st.markdown("""<div class="action-btn btn-weight">
+<div class="btn-icon">⚖️</div>
+<div class="btn-label">น้ำหนัก / ขับถ่าย</div>
+<div class="btn-sub">ชั่งน้ำหนัก / เช็กกระบะ</div>
+</div>""", unsafe_allow_html=True)
     if st.button("➕ น้ำหนัก / 💩", key="btn_weight", use_container_width=True):
         dialog_weight_litter()
 
 # ─── Upcoming Reminders ───────────────────────────────────────────────────────
 st.markdown('<div class="section-title">🔔 กำหนดการเร็วๆ นี้</div>', unsafe_allow_html=True)
-st.markdown("""
-<div class="reminder-scroll">
 
-    <div class="reminder-card card-yellow">
-        <div class="r-icon">🪣</div>
-        <span class="r-badge badge-yellow">อีก 2 วัน</span>
-        <div class="r-title">เปลี่ยนทรายแมว</div>
-        <div class="r-sub">17 ก.ค. 2569 · ทั้งบ้าน</div>
-        <div class="r-sub" style="margin-top:4px">Unicharm Dual Power</div>
-    </div>
+THAI_MONTHS = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
+reminders_df = get_upcoming_reminders(30) if is_db_available() else pd.DataFrame()
 
-    <div class="reminder-card card-red">
-        <div class="r-icon">💉</div>
-        <span class="r-badge badge-red">20 ก.ค.</span>
-        <div class="r-title">นัดฉีดวัคซีนรวม</div>
-        <div class="r-sub">20 ก.ค. 2569 · น้องสามสี</div>
-        <div class="r-sub" style="margin-top:4px">FVRCP Booster ครั้งที่ 2</div>
-    </div>
+if not reminders_df.empty:
+    cards_html = []
+    for _, r in reminders_df.iterrows():
+        days = int(r.get("days_remaining", 0))
+        if days < 0:
+            badge_cls, card_cls, badge_txt = "badge-red", "card-red", f"เลย {abs(days)} วัน"
+        elif days == 0:
+            badge_cls, card_cls, badge_txt = "badge-red", "card-red", "วันนี้!"
+        elif days <= 3:
+            badge_cls, card_cls, badge_txt = "badge-red", "card-red", f"อีก {days} วัน"
+        elif days <= 7:
+            badge_cls, card_cls, badge_txt = "badge-yellow", "card-yellow", f"อีก {days} วัน"
+        else:
+            badge_cls, card_cls, badge_txt = "badge-green", "card-green", f"อีก {days} วัน"
 
-    <div class="reminder-card card-green">
-        <div class="r-icon">💊</div>
-        <span class="r-badge badge-green">อีก 7 วัน</span>
-        <div class="r-title">ยาถ่ายพยาธิ</div>
-        <div class="r-sub">22 ก.ค. 2569 · น้องสามสี</div>
-        <div class="r-sub" style="margin-top:4px">Drontal ครั้งที่ 1</div>
-    </div>
+        rtype = str(r.get("reminder_type", "")).lower()
+        title_lower = str(r.get("title", "")).lower()
+        if "vaccine" in rtype or "วัคซีน" in title_lower:
+            icon = "💉"
+        elif "med" in rtype or "ยา" in title_lower:
+            icon = "💊"
+        elif "litter" in rtype or "ทราย" in title_lower or "clean" in rtype:
+            icon = "🪣"
+        elif "nail" in rtype or "เล็บ" in title_lower or "groom" in rtype or "ตัด" in title_lower:
+            icon = "✂️"
+        elif "vet" in rtype or "หมอ" in title_lower:
+            icon = "🩺"
+        else:
+            icon = "📌"
 
-    <div class="reminder-card card-yellow">
-        <div class="r-icon">✂️</div>
-        <span class="r-badge badge-yellow">อีก 10 วัน</span>
-        <div class="r-title">ตัดเล็บ</div>
-        <div class="r-sub">25 ก.ค. 2569 · น้องสามสี</div>
-        <div class="r-sub" style="margin-top:4px">ทุก 4 สัปดาห์</div>
-    </div>
+        due_date = r["due_date"]
+        d_str = f"{due_date.day} {THAI_MONTHS[due_date.month]} {due_date.year + 543}" if hasattr(due_date, "day") else str(due_date)[:10]
+        cat_name = r.get("cat_name", "ทั้งบ้าน")
+        desc = r.get("description", "")
+        desc_html = f'<div class="r-sub" style="margin-top:4px">{desc}</div>' if desc else ''
 
+        card_item = (
+            f'<div class="reminder-card {card_cls}">'
+            f'<div class="r-icon">{icon}</div>'
+            f'<span class="r-badge {badge_cls}">{badge_txt}</span>'
+            f'<div class="r-title">{r["title"]}</div>'
+            f'<div class="r-sub">{d_str} · {cat_name}</div>'
+            f'{desc_html}'
+            f'</div>'
+        )
+        cards_html.append(card_item)
+
+    full_html = f'<div class="reminder-scroll">{"".join(cards_html)}</div>'
+    st.markdown(full_html, unsafe_allow_html=True)
+else:
+    st.markdown("""<div class="reminder-scroll">
+<div class="reminder-card card-yellow">
+<div class="r-icon">🪣</div>
+<span class="r-badge badge-yellow">อีก 2 วัน</span>
+<div class="r-title">เปลี่ยนทรายแมว</div>
+<div class="r-sub">17 ก.ค. 2569 · ทั้งบ้าน</div>
+<div class="r-sub" style="margin-top:4px">Unicharm Dual Power</div>
 </div>
-""", unsafe_allow_html=True)
+<div class="reminder-card card-red">
+<div class="r-icon">💉</div>
+<span class="r-badge badge-red">20 ก.ค.</span>
+<div class="r-title">นัดฉีดวัคซีนรวม</div>
+<div class="r-sub">20 ก.ค. 2569 · น้องสามสี</div>
+<div class="r-sub" style="margin-top:4px">FVRCP Booster ครั้งที่ 2</div>
+</div>
+<div class="reminder-card card-green">
+<div class="r-icon">💊</div>
+<span class="r-badge badge-green">อีก 7 วัน</span>
+<div class="r-title">ยาถ่ายพยาธิ</div>
+<div class="r-sub">22 ก.ค. 2569 · น้องสามสี</div>
+<div class="r-sub" style="margin-top:4px">Drontal ครั้งที่ 1</div>
+</div>
+<div class="reminder-card card-yellow">
+<div class="r-icon">✂️</div>
+<span class="r-badge badge-yellow">อีก 10 วัน</span>
+<div class="r-title">ตัดเล็บ</div>
+<div class="r-sub">25 ก.ค. 2569 · น้องสามสี</div>
+<div class="r-sub" style="margin-top:4px">ทุก 4 สัปดาห์</div>
+</div>
+</div>""", unsafe_allow_html=True)
 
 # ─── Recent Log ───────────────────────────────────────────────────────────────
 st.markdown('<div class="section-title">📋 ประวัติการบันทึกล่าสุด</div>', unsafe_allow_html=True)
@@ -433,27 +485,9 @@ rows_html = ""
 for entry in recent:
     t = entry["ประเภท"]
     style, _ = TYPE_COLORS.get(t, ("background:#f5f5f5;color:#333", "📌"))
-    rows_html += f"""
-    <tr>
-        <td><b>{entry['เวลา']}</b></td>
-        <td><span class="type-chip" style="{style}">{t}</span></td>
-        <td>{entry['รายละเอียด']}</td>
-        <td>{entry['แมว']}</td>
-    </tr>"""
+    rows_html += f'<tr><td><b>{entry["เวลา"]}</b></td><td><span class="type-chip" style="{style}">{t}</span></td><td>{entry["รายละเอียด"]}</td><td>{entry["แมว"]}</td></tr>'
 
-st.markdown(f"""
-<table class="log-table">
-    <thead>
-        <tr>
-            <th>🕐 เวลา</th>
-            <th>ประเภท</th>
-            <th>รายละเอียด</th>
-            <th>แมว</th>
-        </tr>
-    </thead>
-    <tbody>{rows_html}</tbody>
-</table>
-""", unsafe_allow_html=True)
+st.markdown(f'<table class="log-table"><thead><tr><th>🕐 เวลา</th><th>ประเภท</th><th>รายละเอียด</th><th>แมว</th></tr></thead><tbody>{rows_html}</tbody></table>', unsafe_allow_html=True)
 
 # ─── Footer ───────────────────────────────────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)

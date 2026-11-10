@@ -229,7 +229,7 @@ body{font-family:'Sarabun',sans-serif;min-height:100vh;background:linear-gradien
 </div>
 
 <script>
-const API = 'http://127.0.0.1:8000';
+const API = window.location.origin.includes('8080') ? '' : 'http://127.0.0.1:8080';
 let currentStep = 1, selectedGender = '', selectedAvatar = '🐱';
 
 const MOODS = {

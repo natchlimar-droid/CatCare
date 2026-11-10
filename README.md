@@ -15,11 +15,16 @@
 ## 🌟 จุดเด่นของโปรเจกต์ (Key Features)
 
 - 🐾 **Multi-Cat Profile**: จัดการประวัติแมวหลายตัวได้พร้อมกัน (สายพันธุ์, วันเกิด, สีขน, รูปโปรไฟล์)
-- 📈 **Health & Weight Analytics**: กราฟติดตามการเจริญเติบโตและแนวโน้มน้ำหนัก พร้อมบันทึกพฤติกรรมการกินและขับถ่าย
+- 🩺 **Feline BMI & Body Condition Score (BCS 1-9)**: ประเมินดัชนีมวลกายสรีระตามเกณฑ์สัตวแพทย์สากล WSAVA/AAHA พร้อมกราฟ Safe Weight Corridor และตัวคำนวณพลังงาน RER / DER
+- 🪪 **Digital Pet Passport & QR Code**: พาสปอร์ตดิจิทัลแสดงประวัติวัคซีนครบถ้วน พร้อม QR Code สำหรับสแกนเข้าคลินิกหรือโรงแรมแมว
+- 🥣 **Smart Mixed Feeding Portion Matcher**: คำนวณสัดส่วนอาหารเม็ดผสมอาหารเปียกให้ได้แคลอรีตรงเป้าหมายพอดี 100%
+- 🪣 **Smart Litter & Renal Health AI**: วิเคราะห์ก้อนปัสสาวะและความถี่ คัดกรองความเสี่ยงโรคนิ่วและโรคไตล่วงหน้า
+- 👨‍👩‍👧‍👦 **Family Care Group & LINE Group Sync**: ระบบบ้านร่วมดูแลแมวสำหรับครอบครัว พร้อมรหัสเชิญ **Family Invite Code (`CAT-FAM-7734`)** และ **Dynamic QR Code** ให้คนในบ้านสแกนเข้าร่วมทันที เชื่อมต่อบอทเข้ากลุ่ม LINE เพื่อ Broadcast การให้อาหารและป้อนยาแบบ Real-Time ป้องกันการให้ซ้ำซ้อน
+- 💬 **LINE Messaging API Rich Flex**: ส่งการ์ดแจ้งเตือนแบบ Interactive Rich UI พร้อมปุ่ม Action (กดบันทึกว่าฉีดแล้ว / ป้อนยาแล้ว จากแชต LINE ได้ทันที)
+- 🚨 **Toxic Plants & Food Radar**: สารานุกรมค้นหาพืชมีพิษและอาหารอันตราย พร้อมเบอร์โทรฉุกเฉินโรงพยาบาลสัตว์ 24 ชม.
 - 💸 **Expense Tracker**: วิเคราะห์ค่าใช้จ่ายแยกหมวดหมู่ (ค่ารักษา, อาหาร, ทรายแมว, ยา, ของเล่น) พร้อมสรุปยอดรวม
-- ⏰ **Automated Reminders & Notifications**: ระบบตั้งเตือนวัคซีน ป้อนยา และนัดพบสัตวแพทย์ พร้อมเชื่อมต่อ LINE Messaging API ผ่าน Scheduler อัตโนมัติ
-- 🔐 **Secure Authentication**: ระบบสมัครสมาชิกและเข้าสู่ระบบด้วย JWT Token และ Bcrypt Password Hashing
-- 🖥️ **Interactive Dashboard**: หน้าแดชบอร์ดสรุปผลแบบเรียลไทม์ พัฒนาด้วย Streamlit และ Plotly
+- 📱 **Mobile Application UI Design**: ออกแบบ UI สไตล์ Mobile App (One-Handed Navigation, Bottom Bar, Soft Pastel Palette) ตอบโจทย์คนเลี้ยงสัตว์ยุคใหม่
+- 🔐 **Secure Authentication & Dual Database**: ระบบสมัครสมาชิก/เข้าสู่ระบบ JWT Bcrypt พร้อม SQLite Fallback และ PostgreSQL Production Ready
 
 ---
 
@@ -208,13 +213,23 @@ run.bat
 CatCare/
 ├── alembic/                # Database Migrations & Version Control
 │   └── versions/           # ไฟล์ Migration สร้างตาราง
-├── app/                    # Backend API (FastAPI)
+├── app/                    # Backend API (FastAPI) & Health Engine
 │   ├── routers/            # Endpoint แยกโมดูล (Auth, Cats, ฯลฯ)
 │   ├── database.py         # SQLAlchemy Engine & Session Configuration
 │   ├── models.py           # SQLAlchemy ORM Models
+│   ├── feline_health.py    # Feline BCS, BMI & Nutrition Calculation Engine
 │   └── main.py             # FastAPI App Entrypoint
 ├── automation/             # Scheduler & LINE Notification Services
 ├── dashboard/              # Streamlit Web Analytics Dashboard
+│   ├── pages/
+│   │   ├── 0_🔐_Login.py           # ระบบ Login / Register พร้อมปุ่ม Auto-Fill Demo
+│   │   ├── 1_📝_Daily_Entry.py     # บันทึกกิจวัตรประจำวัน & ไดนามิกการ์ดแจ้งเตือน
+│   │   ├── 2_🔔_Reminders.py       # จัดการและกดเสร็จสิ้นการแจ้งเตือน
+│   │   ├── 3_🪪_Pet_Passport.py    # พาสปอร์ตดิจิทัล + QR Code + คำนวณอาหารเม็ด/เปียก
+│   │   └── 4_🏥_Smart_Health_AI.py # วิเคราะห์ก้อนฉี่/ไต + เวรดูแลครอบครัว + LINE Flex
+│   ├── dashboard.py        # หน้าหลัก Analytics, ค่าใช้จ่าย, กราฟน้ำหนัก & BCS Gauge
+│   └── db_queries.py       # รวมคำสั่งดึงข้อมูลข้ามระบบแบบ Dialect-Agnostic
+├── ui/                     # Interactive HTML/CSS/JS Web App (FastAPI Static)
 ├── seed_data.py            # สคริปต์สร้าง Mockup Data สำหรับ Demo / Showcase
 ├── mock_data.sql           # ไฟล์ SQL Mockup Data สำหรับนำเข้าตรง
 ├── .env.example            # ตัวอย่างการตั้งค่า Environment Variables

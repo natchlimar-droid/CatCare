@@ -56,6 +56,43 @@ select.cat-select option{background:#2C3E50;color:white;}
 .empty-state{text-align:center;padding:2rem;color:#bbb;font-size:.9rem;}
 @media(max-width:700px){.grid4{grid-template-columns:1fr 1fr;}.grid2{grid-template-columns:1fr;}.profile-hero{flex-wrap:wrap;}}
 @media(max-width:430px){.grid4,.grid2{grid-template-columns:1fr;}}
+/* Mobile Bottom Bar */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 159, 67, 0.15);
+  justify-content: space-around;
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.b-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #777;
+  text-decoration: none;
+  gap: 2px;
+  transition: 0.2s;
+}
+.b-nav-item.active {
+  color: var(--orange);
+}
+.b-nav-item .b-icon {
+  font-size: 1.3rem;
+}
+@media (max-width: 768px) {
+  body { padding-bottom: 75px; }
+  .bottom-nav { display: flex; }
+  .nav-links { display: none; }
+}
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#FF9F43">
@@ -151,7 +188,7 @@ select.cat-select option{background:#2C3E50;color:white;}
 </main>
 
 <script>
-const API = 'http://127.0.0.1:8000';
+const API = window.location.origin.includes('8080') ? '' : 'http://127.0.0.1:8080';
 let token = localStorage.getItem('cc_token') || sessionStorage.getItem('cc_token');
 let cats = [], currentCatId = null;
 if (!token) window.location.href = 'login.html';
@@ -270,5 +307,25 @@ function renderDemoCharts() {
 
 init();
 </script>
+
+<div class="bottom-nav">
+  <a href="dashboard.html" class="b-nav-item active">
+    <span class="b-icon">📊</span>
+    <span>สรุปผล</span>
+  </a>
+  <a href="data_entry.html" class="b-nav-item">
+    <span class="b-icon">📝</span>
+    <span>บันทึกด่วน</span>
+  </a>
+  <a href="http://localhost:8501/Family_Group" target="_blank" class="b-nav-item">
+    <span class="b-icon">👨‍👩‍👧‍👦</span>
+    <span>ครอบครัว</span>
+  </a>
+  <a href="http://localhost:8501/Pet_Passport" target="_blank" class="b-nav-item">
+    <span class="b-icon">🪪</span>
+    <span>พาสปอร์ต</span>
+  </a>
+</div>
+
 </body>
 </html>

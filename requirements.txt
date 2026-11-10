@@ -16,12 +16,16 @@ sqlalchemy>=2.0.0
 alembic>=1.13.0
 psycopg2-binary>=2.9.9        # PostgreSQL driver (sync, for Alembic + Streamlit)
 asyncpg>=0.29.0               # async driver (for FastAPI)
+aiosqlite>=0.20.0             # SQLite driver (zero-setup fallback)
+greenlet>=3.0.0               # async SQLAlchemy support
 
 # ─── Automation & Scheduling ──────────────────────────────────────────────────
 httpx>=0.27.0
 apscheduler>=3.10.0
 
-# ─── Dashboard ────────────────────────────────────────────────────────────────
+# ─── Dashboard & Utilities ───────────────────────────────────────────────────
 streamlit>=1.35.0
 plotly>=5.22.0
 pandas>=2.2.0
+qrcode[pil]>=7.4.2
+pillow>=10.0.0

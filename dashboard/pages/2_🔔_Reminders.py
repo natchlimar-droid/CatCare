@@ -185,22 +185,20 @@ else:
 
         col_card, col_btn = st.columns([8, 1])
         with col_card:
-            st.markdown(f"""
-            <div class="reminder-card {card_cls}">
-                <div class="r-icon">{emoji}</div>
-                <div class="r-body">
-                    <div class="r-title">
-                        {row['title']}
-                        <span class="r-badge {badge_cls}">{badge_txt}</span>
-                    </div>
-                    <div class="r-meta">
-                        🐱 {row['cat_name']} &nbsp;·&nbsp; 🏷️ {type_label}
-                        &nbsp;·&nbsp; 📅 {due_str}{recurring_txt}
-                    </div>
-                    {desc_txt}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(f"""<div class="reminder-card {card_cls}">
+<div class="r-icon">{emoji}</div>
+<div class="r-body">
+<div class="r-title">
+{row['title']}
+<span class="r-badge {badge_cls}">{badge_txt}</span>
+</div>
+<div class="r-meta">
+🐱 {row['cat_name']} &nbsp;·&nbsp; 🏷️ {type_label}
+&nbsp;·&nbsp; 📅 {due_str}{recurring_txt}
+</div>
+{desc_txt}
+</div>
+</div>""", unsafe_allow_html=True)
 
         with col_btn:
             st.markdown("<br>", unsafe_allow_html=True)

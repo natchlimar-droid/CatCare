@@ -3,8 +3,8 @@ app/database.py
 ───────────────
 SQLAlchemy Engine + Session Factory
 รองรับทั้ง:
-  - Sync  (psycopg2)  → ใช้กับ Alembic และ Streamlit
-  - Async (asyncpg)   → ใช้กับ FastAPI endpoints
+  - SQLite     (sqlite3 / aiosqlite) → Standalone / Zero Setup
+  - PostgreSQL (psycopg2 / asyncpg)  → Production / Dedicated DB
 """
 
 import os
@@ -16,17 +16,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ─── Connection Strings ───────────────────────────────────────────────────────
-DATABASE_URL       = os.getenv("DATABASE_URL", "postgresql://catcare_user:password@localhost:5432/catcare_db")
-DATABASE_URL_ASYNC = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
-DATABASE_URL_SYNC  = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./catcare.db")
 
-# ─── Sync Engine (Alembic + Streamlit) ───────────────────────────────────────
-sync_engine = create_engine(DATABASE_URL_SYNC, pool_pre_ping=True, echo=False)
+if DATABASE_URL.startswith("sqlite"):
+    DATABASE_URL_SYNC = DATABASE_URL
+    DATABASE_URL_ASYNC = DATABASE_URL.replace("sqlite://", "sqlite+aiosqlite://")
+    sync_engine = create_engine(
+        DATABASE_URL_SYNC,
+        connect_args={"check_same_thread": False},
+        echo=False
+    )
+    async_engine = create_async_engine(DATABASE_URL_ASYNC, echo=False)
+else:
+    DATABASE_URL_ASYNC = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+    DATABASE_URL_SYNC  = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://")
+    sync_engine = create_engine(DATABASE_URL_SYNC, pool_pre_ping=True, echo=False)
+    async_engine = create_async_engine(DATABASE_URL_ASYNC, pool_pre_ping=True, echo=False)
+
 SyncSessionLocal = sessionmaker(bind=sync_engine, autocommit=False, autoflush=False)
-
-# ─── Async Engine (FastAPI) ───────────────────────────────────────────────────
-async_engine = create_async_engine(DATABASE_URL_ASYNC, pool_pre_ping=True, echo=False)
 AsyncSessionLocal = async_sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
+
 
 # ─── Base Model ───────────────────────────────────────────────────────────────
 class Base(DeclarativeBase):
@@ -58,6 +67,5 @@ def test_connection() -> bool:
         with sync_engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         return True
-    except Exception as e:
-        print(f"[DB] Connection failed: {e}")
+    except Exception:
         return False
