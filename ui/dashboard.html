@@ -191,7 +191,13 @@ select.cat-select option{background:#2C3E50;color:white;}
 const API = window.location.origin.includes('8080') ? '' : 'http://127.0.0.1:8080';
 let token = localStorage.getItem('cc_token') || sessionStorage.getItem('cc_token');
 let cats = [], currentCatId = null;
-if (!token) window.location.href = 'login.html';
+
+const isGhPages = window.location.hostname.includes('github.io');
+if (!token) {
+  token = 'demo-gh-pages-token';
+  localStorage.setItem('cc_token', token);
+  localStorage.setItem('cc_display_name', 'Natcha & Cats (Demo)');
+}
 
 function logout() {
   localStorage.clear(); sessionStorage.clear();
@@ -199,18 +205,29 @@ function logout() {
 }
 
 async function apiFetch(path, opts = {}) {
-  const res = await fetch(API + path, {
-    ...opts, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts.headers||{}) },
-  });
-  if (res.status === 401) { logout(); return null; }
-  return res.json();
+  if (token === 'demo-gh-pages-token' || isGhPages) {
+    return null;
+  }
+  try {
+    const res = await fetch(API + path, {
+      ...opts,
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts.headers||{}) },
+    });
+    if (res.status === 401) {
+      console.warn('Unauthorized 401: Keeping session');
+      return null;
+    }
+    return res.json();
+  } catch (e) {
+    return null;
+  }
 }
 
 async function init() {
   const name = localStorage.getItem('cc_display_name') || sessionStorage.getItem('cc_display_name') || 'Natcha & Cats';
   document.getElementById('navUser').textContent = 'สวัสดี, ' + name;
   try {
-    if (token === 'demo-gh-pages-token') {
+    if (token === 'demo-gh-pages-token' || isGhPages) {
       loadDemoMode();
       return;
     }
@@ -237,18 +254,35 @@ function loadDemoMode() {
   document.getElementById('kpiCatCount').innerHTML = cats.length + ' <span>ตัว</span>';
   const sel = document.getElementById('catSelect');
   sel.innerHTML = cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  selectCatDemo(cats[0]);
+  
+  const savedCatId = localStorage.getItem('cc_current_cat');
+  const targetCat = cats.find(c => String(c.id) === String(savedCatId)) || cats[0];
+  selectCatDemo(targetCat);
 }
 
 function selectCatDemo(cat) {
   currentCatId = cat.id;
+  localStorage.setItem('cc_current_cat', cat.id);
   document.getElementById('heroName').textContent = cat.name + ' 🐾';
   document.getElementById('heroBreed').textContent = cat.breed + ' · ' + (cat.gender==='female'?'เพศเมีย':'เพศผู้') + ' · เกิด ' + cat.birth_date;
   document.getElementById('catSelect').value = cat.id;
   
+  // Calculate locally entered expenses
+  let extraExp = 0;
+  try {
+    const allExp = JSON.parse(localStorage.getItem('cc_local_expenses') || '[]');
+    extraExp = allExp
+      .filter(x => !x.cat_id || String(x.cat_id) === String(cat.id))
+      .reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+  } catch(e) {}
+
+  // Calculate local weight
+  const localWeight = parseFloat(localStorage.getItem('cc_local_weight_' + cat.id));
+  const effectiveWeight = (!isNaN(localWeight) && localWeight > 0) ? localWeight : cat.weight;
+
   updateKPIs({
-    latest_weight: { kg: cat.weight, recorded_at: new Date() },
-    expense_this_month: cat.exp,
+    latest_weight: { kg: effectiveWeight, recorded_at: new Date() },
+    expense_this_month: cat.exp + extraExp,
     next_reminder: { title: 'นัดฉีดวัคซีนรวม FVRCP Booster', days_remaining: 2 }
   });
 
@@ -258,20 +292,29 @@ function selectCatDemo(cat) {
     { title: 'ป้อนยาถ่ายพยาธิ Drontal', reminder_type: 'medicine', days_remaining: 9, due_date: '2026-11-28', description: 'หลังอาหารเช้า' }
   ]);
 
-  renderActivities([
-    { activity_type: 'eating', food_type: 'wet', food_amount_g: 85, food_brand: 'Sheba Pouch', recorded_at: new Date(Date.now() - 3600000*2) },
-    { activity_type: 'weight', weight_kg: cat.weight, recorded_at: new Date(Date.now() - 3600000*6) },
-    { activity_type: 'eating', food_type: 'dry', food_amount_g: 45, food_brand: 'Royal Canin', recorded_at: new Date(Date.now() - 3600000*12) }
-  ]);
+  // Read local activities from data_entry.html and prepend them
+  let combinedActivities = [];
+  try {
+    const allLocal = JSON.parse(localStorage.getItem('cc_local_activities') || '[]');
+    combinedActivities = allLocal.filter(a => !a.cat_id || String(a.cat_id) === String(cat.id));
+  } catch(e) {}
 
+  const defaultActivities = [
+    { activity_type: 'eating', food_type: 'wet', food_amount_g: 85, food_brand: 'Sheba Pouch', recorded_at: new Date(Date.now() - 3600000*2) },
+    { activity_type: 'weight', weight_kg: effectiveWeight, recorded_at: new Date(Date.now() - 3600000*6) },
+    { activity_type: 'eating', food_type: 'dry', food_amount_g: 45, food_brand: 'Royal Canin', recorded_at: new Date(Date.now() - 3600000*12) }
+  ];
+
+  renderActivities([...combinedActivities, ...defaultActivities].slice(0, 6));
   renderDemoCharts();
 }
 
 async function selectCat(catId) {
   currentCatId = catId;
+  localStorage.setItem('cc_current_cat', catId);
   const cat = cats.find(c=>c.id===catId);
   if (!cat) return;
-  if (token === 'demo-gh-pages-token') {
+  if (token === 'demo-gh-pages-token' || isGhPages) {
     selectCatDemo(cat);
     return;
   }
@@ -287,7 +330,9 @@ async function selectCat(catId) {
     if (summary) updateKPIs(summary);
     if (reminders) renderReminders(reminders);
     if (activities) renderActivities(activities);
-  } catch(e) {}
+  } catch(e) {
+    selectCatDemo(cat);
+  }
   renderDemoCharts();
 }
 

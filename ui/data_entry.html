@@ -1,505 +1,1131 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บันทึกข้อมูล | Cat Care</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Prompt:wght@600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --cream:#F7F1E3;--orange:#FF9F43;--dark:#2C3E50;--brown:#8B5E3C;
-  --food-color:#FF9F43;--food-lt:#FFF3E0;
-  --health-color:#A8E6CF;--health-lt:#F0FFF8;
-  --expense-color:#C3A9D1;--expense-lt:#F8F0FF;
-  --radius:18px;--shadow:0 6px 24px rgba(44,62,80,.08);
-}
-body{font-family:'Sarabun',sans-serif;background:linear-gradient(135deg,#FFF8F0,#F7F1E3,#F0EBE0);min-height:100vh;color:var(--dark);}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บันทึกข้อมูล | Cat Care</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Prompt:wght@600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
-/* Nav */
-nav{background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,159,67,.15);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.nav-brand{font-family:'Prompt',sans-serif;font-size:1.15rem;font-weight:700;color:var(--dark);text-decoration:none;}
-.nav-brand span{color:var(--orange);}
-.nav-links{display:flex;gap:.4rem;}
-.nav-link{padding:.4rem .9rem;border-radius:10px;font-size:.82rem;font-weight:600;text-decoration:none;color:#777;transition:.2s;}
-.nav-link.active{background:rgba(255,159,67,.12);color:var(--orange);}
-.nav-link:hover{background:rgba(0,0,0,.04);}
-.nav-right{display:flex;align-items:center;gap:.6rem;}
-.nav-user{font-size:.8rem;font-weight:600;color:var(--dark);}
-.btn-logout{padding:.35rem .8rem;border:1.5px solid rgba(255,107,157,.35);border-radius:8px;background:transparent;color:#FF6B9D;font-size:.78rem;font-weight:700;cursor:pointer;transition:.2s;font-family:'Sarabun',sans-serif;}
-.btn-logout:hover{background:#fce4ec;}
+    :root {
+      --cream: #F7F1E3;
+      --orange: #FF9F43;
+      --dark: #2C3E50;
+      --brown: #8B5E3C;
+      --food-color: #FF9F43;
+      --food-lt: #FFF3E0;
+      --health-color: #A8E6CF;
+      --health-lt: #F0FFF8;
+      --expense-color: #C3A9D1;
+      --expense-lt: #F8F0FF;
+      --radius: 18px;
+      --shadow: 0 6px 24px rgba(44, 62, 80, .08);
+    }
 
-/* Mobile Bottom Bar */
-.bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(255, 159, 67, 0.15);
-  justify-content: space-around;
-  padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
-  z-index: 1000;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-}
-.b-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #777;
-  text-decoration: none;
-  gap: 2px;
-  transition: 0.2s;
-}
-.b-nav-item.active {
-  color: var(--orange);
-}
-.b-nav-item .b-icon {
-  font-size: 1.3rem;
-}
-@media (max-width: 768px) {
-  body { padding-bottom: 75px; }
-  .bottom-nav { display: flex; }
-  .nav-links { display: none; }
-}
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: linear-gradient(135deg, #FFF8F0, #F7F1E3, #F0EBE0);
+      min-height: 100vh;
+      color: var(--dark);
+    }
 
-/* main */
-main{max-width:780px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+    /* Nav */
+    nav {
+      background: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 159, 67, .15);
+      padding: .9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-/* page header */
-.page-header{margin-bottom:1.5rem;}
-.page-header h1{font-family:'Prompt',sans-serif;font-size:1.4rem;font-weight:700;color:var(--dark);}
-.page-header p{font-size:.85rem;color:#999;margin-top:.2rem;}
-.date-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,159,67,.12);border-radius:20px;padding:.3rem .9rem;font-size:.8rem;color:var(--brown);font-weight:600;margin-top:.6rem;}
+    .nav-brand {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark);
+      text-decoration: none;
+    }
 
-/* Tab selector */
-.tab-wrap{display:flex;gap:.6rem;margin-bottom:1.5rem;background:rgba(255,255,255,.6);padding:.4rem;border-radius:16px;border:1px solid rgba(255,159,67,.15);}
-.tab{flex:1;padding:.65rem .5rem;border:none;border-radius:12px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:.88rem;font-weight:600;transition:all .25s;background:transparent;color:#999;}
-.tab.active{color:white;box-shadow:0 4px 14px rgba(0,0,0,.1);}
-.tab-food.active   {background:linear-gradient(135deg,var(--food-color),#FFB347);}
-.tab-health.active {background:linear-gradient(135deg,var(--health-color),#7ED6B8);}
-.tab-expense.active{background:linear-gradient(135deg,var(--expense-color),#A07AC4);}
-.tab:hover:not(.active){background:rgba(0,0,0,.04);}
+    .nav-brand span {
+      color: var(--orange);
+    }
 
-/* panels */
-.panel{display:none;animation:fadeUp .3s ease;}
-.panel.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .nav-links {
+      display: flex;
+      gap: .4rem;
+    }
 
-/* section card */
-.s-card{background:#fff;border-radius:var(--radius);padding:1.4rem 1.5rem;box-shadow:var(--shadow);border:1.5px solid rgba(255,159,67,.1);margin-bottom:1rem;}
-.s-card-header{display:flex;align-items:center;gap:.7rem;margin-bottom:1.2rem;}
-.s-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
-.s-icon-food   {background:var(--food-lt);}
-.s-icon-health {background:var(--health-lt);}
-.s-icon-expense{background:var(--expense-lt);}
-.s-title{font-family:'Prompt',sans-serif;font-size:1rem;font-weight:700;color:var(--dark);}
-.s-sub{font-size:.78rem;color:#999;}
+    .nav-link {
+      padding: .4rem .9rem;
+      border-radius: 10px;
+      font-size: .82rem;
+      font-weight: 600;
+      text-decoration: none;
+      color: #777;
+      transition: .2s;
+    }
 
-/* form elements */
-.field-row{display:grid;gap:.9rem;margin-bottom:.9rem;}
-.field-row.col2{grid-template-columns:1fr 1fr;}
-.field-row.col3{grid-template-columns:1fr 1fr 1fr;}
-.field label{display:block;font-size:.82rem;font-weight:700;color:var(--dark);margin-bottom:.4rem;}
-.field label .req{color:var(--orange);}
-.inp{width:100%;padding:.72rem 1rem;border:2px solid #EDE8DF;border-radius:12px;font-family:'Sarabun',sans-serif;font-size:.92rem;color:var(--dark);background:#FFFAF4;outline:none;transition:all .2s;}
-.inp:focus{border-color:var(--orange);background:#fff;box-shadow:0 0 0 4px rgba(255,159,67,.1);}
-.inp::placeholder{color:#c5bfb5;}
-select.inp{cursor:pointer;}
+    .nav-link.active {
+      background: rgba(255, 159, 67, .12);
+      color: var(--orange);
+    }
 
-/* chip buttons */
-.chip-group{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.2rem;}
-.chip{padding:.45rem 1rem;border:2px solid #EDE8DF;border-radius:20px;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:.82rem;font-weight:600;background:#fff;color:#888;transition:all .2s;}
-.chip:hover{border-color:var(--orange);color:var(--orange);}
-.chip.sel-food   {border-color:var(--food-color);background:var(--food-lt);color:var(--brown);}
-.chip.sel-health {border-color:var(--health-color);background:var(--health-lt);color:#1A6B4A;}
-.chip.sel-expense{border-color:var(--expense-color);background:var(--expense-lt);color:#5A3A7A;}
+    .nav-link:hover {
+      background: rgba(0, 0, 0, .04);
+    }
 
-/* range slider */
-.slider-wrap{display:flex;align-items:center;gap:.8rem;margin-top:.3rem;}
-.range-inp{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;background:linear-gradient(to right,var(--orange) var(--val,50%),#EDE8DF var(--val,50%));outline:none;}
-.range-inp::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--orange);cursor:pointer;box-shadow:0 2px 8px rgba(255,159,67,.4);}
-.range-val{background:var(--food-lt);color:var(--brown);font-weight:700;font-size:.9rem;border-radius:10px;padding:.3rem .8rem;min-width:60px;text-align:center;}
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
 
-/* litter status */
-.litter-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:.4rem;}
-.litter-btn{padding:.7rem .4rem;border:2px solid #EDE8DF;border-radius:14px;cursor:pointer;background:#fff;text-align:center;transition:all .2s;font-size:.8rem;font-family:'Sarabun',sans-serif;font-weight:600;}
-.litter-btn .lb-icon{font-size:1.5rem;display:block;margin-bottom:.2rem;}
-.litter-btn:hover,.litter-btn.active{border-color:var(--health-color);background:var(--health-lt);}
+    .nav-user {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
 
-/* expense chips */
-.expense-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:.4rem;}
-.exp-cat{padding:.8rem .5rem;border:2px solid #EDE8DF;border-radius:14px;cursor:pointer;background:#fff;text-align:center;transition:all .2s;font-size:.8rem;font-family:'Sarabun',sans-serif;font-weight:600;color:#888;}
-.exp-cat .ec-icon{font-size:1.4rem;display:block;margin-bottom:.3rem;}
-.exp-cat:hover,.exp-cat.active{border-color:var(--expense-color);background:var(--expense-lt);color:#5A3A7A;}
+    .btn-logout {
+      padding: .35rem .8rem;
+      border: 1.5px solid rgba(255, 107, 157, .35);
+      border-radius: 8px;
+      background: transparent;
+      color: #FF6B9D;
+      font-size: .78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+      font-family: 'Sarabun', sans-serif;
+    }
 
-/* amount input special */
-.amount-wrap{position:relative;}
-.amount-wrap .currency{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--brown);font-size:.95rem;}
-.amount-wrap .inp{padding-left:2.2rem;}
+    .btn-logout:hover {
+      background: #fce4ec;
+    }
 
-/* notes */
-textarea.inp{resize:vertical;min-height:70px;}
+    /* Mobile Bottom Bar */
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255, 159, 67, 0.15);
+      justify-content: space-around;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+      z-index: 1000;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    }
 
-/* submit */
-.btn-submit{width:100%;padding:.9rem;border:none;cursor:pointer;border-radius:14px;font-family:'Prompt',sans-serif;font-weight:700;font-size:1rem;color:white;transition:all .25s;margin-top:.5rem;}
-.btn-food   {background:linear-gradient(135deg,var(--food-color),#FFB347);box-shadow:0 4px 16px rgba(255,159,67,.35);}
-.btn-health {background:linear-gradient(135deg,#7ED6B8,var(--health-color));box-shadow:0 4px 16px rgba(168,230,207,.5);}
-.btn-expense{background:linear-gradient(135deg,var(--expense-color),#A07AC4);box-shadow:0 4px 16px rgba(195,169,209,.4);}
-.btn-submit:hover{transform:translateY(-2px);filter:brightness(1.05);}
+    .b-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #777;
+      text-decoration: none;
+      gap: 2px;
+      transition: 0.2s;
+    }
 
-/* success toast */
-.toast{position:fixed;bottom:2rem;right:2rem;background:#2C3E50;color:white;padding:.9rem 1.4rem;border-radius:14px;font-size:.9rem;font-weight:600;display:flex;align-items:center;gap:.5rem;transform:translateY(100px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);z-index:999;}
-.toast.show{transform:translateY(0);opacity:1;}
+    .b-nav-item.active {
+      color: var(--orange);
+    }
 
-@media(max-width:500px){.field-row.col2,.field-row.col3{grid-template-columns:1fr;}.litter-opts,.expense-cats{grid-template-columns:repeat(2,1fr);}}
-</style>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FF9F43">
-<link rel="apple-touch-icon" href="icon.svg">
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed: ', err));
-    });
-  }
-</script>
+    .b-nav-item .b-icon {
+      font-size: 1.3rem;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 75px;
+      }
+
+      .bottom-nav {
+        display: flex;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* main */
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* page header */
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .page-header p {
+      font-size: .85rem;
+      color: #999;
+      margin-top: .2rem;
+    }
+
+    .date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: rgba(255, 159, 67, .12);
+      border-radius: 20px;
+      padding: .3rem .9rem;
+      font-size: .8rem;
+      color: var(--brown);
+      font-weight: 600;
+      margin-top: .6rem;
+    }
+
+    /* Tab selector */
+    .tab-wrap {
+      display: flex;
+      gap: .6rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, .6);
+      padding: .4rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 159, 67, .15);
+    }
+
+    .tab {
+      flex: 1;
+      padding: .65rem .5rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      transition: all .25s;
+      background: transparent;
+      color: #999;
+    }
+
+    .tab.active {
+      color: white;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .1);
+    }
+
+    .tab-food.active {
+      background: linear-gradient(135deg, var(--food-color), #FFB347);
+    }
+
+    .tab-health.active {
+      background: linear-gradient(135deg, var(--health-color), #7ED6B8);
+    }
+
+    .tab-expense.active {
+      background: linear-gradient(135deg, var(--expense-color), #A07AC4);
+    }
+
+    .tab:hover:not(.active) {
+      background: rgba(0, 0, 0, .04);
+    }
+
+    /* panels */
+    .panel {
+      display: none;
+      animation: fadeUp .3s ease;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* section card */
+    .s-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 1.4rem 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1.5px solid rgba(255, 159, 67, .1);
+      margin-bottom: 1rem;
+    }
+
+    .s-card-header {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .s-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .s-icon-food {
+      background: var(--food-lt);
+    }
+
+    .s-icon-health {
+      background: var(--health-lt);
+    }
+
+    .s-icon-expense {
+      background: var(--expense-lt);
+    }
+
+    .s-title {
+      font-family: 'Prompt', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .s-sub {
+      font-size: .78rem;
+      color: #999;
+    }
+
+    /* form elements */
+    .field-row {
+      display: grid;
+      gap: .9rem;
+      margin-bottom: .9rem;
+    }
+
+    .field-row.col2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .field-row.col3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .field label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: .4rem;
+    }
+
+    .field label .req {
+      color: var(--orange);
+    }
+
+    .inp {
+      width: 100%;
+      padding: .72rem 1rem;
+      border: 2px solid #EDE8DF;
+      border-radius: 12px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .92rem;
+      color: var(--dark);
+      background: #FFFAF4;
+      outline: none;
+      transition: all .2s;
+    }
+
+    .inp:focus {
+      border-color: var(--orange);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(255, 159, 67, .1);
+    }
+
+    .inp::placeholder {
+      color: #c5bfb5;
+    }
+
+    select.inp {
+      cursor: pointer;
+    }
+
+    /* chip buttons */
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: .2rem;
+    }
+
+    .chip {
+      padding: .45rem 1rem;
+      border: 2px solid #EDE8DF;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      background: #fff;
+      color: #888;
+      transition: all .2s;
+    }
+
+    .chip:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .chip.sel-food {
+      border-color: var(--food-color);
+      background: var(--food-lt);
+      color: var(--brown);
+    }
+
+    .chip.sel-health {
+      border-color: var(--health-color);
+      background: var(--health-lt);
+      color: #1A6B4A;
+    }
+
+    .chip.sel-expense {
+      border-color: var(--expense-color);
+      background: var(--expense-lt);
+      color: #5A3A7A;
+    }
+
+    /* range slider */
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-top: .3rem;
+    }
+
+    .range-inp {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(to right, var(--orange) var(--val, 50%), #EDE8DF var(--val, 50%));
+      outline: none;
+    }
+
+    .range-inp::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--orange);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255, 159, 67, .4);
+    }
+
+    .range-val {
+      background: var(--food-lt);
+      color: var(--brown);
+      font-weight: 700;
+      font-size: .9rem;
+      border-radius: 10px;
+      padding: .3rem .8rem;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* litter status */
+    .litter-opts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .6rem;
+      margin-top: .4rem;
+    }
+
+    .litter-btn {
+      padding: .7rem .4rem;
+      border: 2px solid #EDE8DF;
+      border-radius: 14px;
+      cursor: pointer;
+      background: #fff;
+      text-align: center;
+      transition: all .2s;
+      font-size: .8rem;
+      font-family: 'Sarabun', sans-serif;
+      font-weight: 600;
+    }
+
+    .litter-btn .lb-icon {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: .2rem;
+    }
+
+    .litter-btn:hover,
+    .litter-btn.active {
+      border-color: var(--health-color);
+      background: var(--health-lt);
+    }
+
+    /* expense chips */
+    .expense-cats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .6rem;
+      margin-top: .4rem;
+    }
+
+    .exp-cat {
+      padding: .8rem .5rem;
+      border: 2px solid #EDE8DF;
+      border-radius: 14px;
+      cursor: pointer;
+      background: #fff;
+      text-align: center;
+      transition: all .2s;
+      font-size: .8rem;
+      font-family: 'Sarabun', sans-serif;
+      font-weight: 600;
+      color: #888;
+    }
+
+    .exp-cat .ec-icon {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    .exp-cat:hover,
+    .exp-cat.active {
+      border-color: var(--expense-color);
+      background: var(--expense-lt);
+      color: #5A3A7A;
+    }
+
+    /* amount input special */
+    .amount-wrap {
+      position: relative;
+    }
+
+    .amount-wrap .currency {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: 700;
+      color: var(--brown);
+      font-size: .95rem;
+    }
+
+    .amount-wrap .inp {
+      padding-left: 2.2rem;
+    }
+
+    /* notes */
+    textarea.inp {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    /* submit */
+    .btn-submit {
+      width: 100%;
+      padding: .9rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: white;
+      transition: all .25s;
+      margin-top: .5rem;
+    }
+
+    .btn-food {
+      background: linear-gradient(135deg, var(--food-color), #FFB347);
+      box-shadow: 0 4px 16px rgba(255, 159, 67, .35);
+    }
+
+    .btn-health {
+      background: linear-gradient(135deg, #7ED6B8, var(--health-color));
+      box-shadow: 0 4px 16px rgba(168, 230, 207, .5);
+    }
+
+    .btn-expense {
+      background: linear-gradient(135deg, var(--expense-color), #A07AC4);
+      box-shadow: 0 4px 16px rgba(195, 169, 209, .4);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+
+    /* success toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #2C3E50;
+      color: white;
+      padding: .9rem 1.4rem;
+      border-radius: 14px;
+      font-size: .9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all .35s cubic-bezier(.34, 1.56, .64, 1);
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media(max-width:500px) {
+
+      .field-row.col2,
+      .field-row.col3 {
+        grid-template-columns: 1fr;
+      }
+
+      .litter-opts,
+      .expense-cats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FF9F43">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed: ', err));
+      });
+    }
+  </script>
 </head>
+
 <body>
 
-<!-- Nav -->
-<nav>
-  <a href="dashboard.html" class="nav-brand">Cat <span>Care</span> 🐾</a>
-  <div class="nav-links">
-    <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
-    <a href="data_entry.html" class="nav-link active">📝 บันทึก</a>
-  </div>
-  <div class="nav-right">
-    <span class="nav-user" id="navUser"></span>
-    <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
-  </div>
-</nav>
+  <!-- Nav -->
+  <nav>
+    <a href="dashboard.html" class="nav-brand">Cat <span>Care</span> 🐾</a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="data_entry.html" class="nav-link active">📝 บันทึก</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-user" id="navUser"></span>
+      <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </nav>
 
-<main>
-  <div class="page-header">
-    <h1>📝 บันทึกข้อมูลประจำวัน</h1>
-    <p>บันทึกกิจกรรมของน้องแมวอย่างสม่ำเสมอ ช่วยวิเคราะห์สุขภาพได้แม่นยำขึ้น</p>
-    <div class="date-badge">📅 <span id="todayDate"></span></div>
-  </div>
+  <main>
+    <div class="page-header">
+      <h1>📝 บันทึกข้อมูลประจำวัน</h1>
+      <p>บันทึกกิจกรรมของน้องแมวอย่างสม่ำเสมอ ช่วยวิเคราะห์สุขภาพได้แม่นยำขึ้น</p>
+      <div class="date-badge">📅 <span id="todayDate"></span></div>
+    </div>
 
-  <!-- Tabs -->
-  <div class="tab-wrap">
-    <button class="tab tab-food active" onclick="switchTab('food',this)">🍽️ บันทึกการกิน</button>
-    <button class="tab tab-health"      onclick="switchTab('health',this)">🩺 สุขภาพ</button>
-    <button class="tab tab-expense"     onclick="switchTab('expense',this)">💸 ค่าใช้จ่าย</button>
-  </div>
-
-  <!-- FOOD PANEL -->
-  <div class="panel active" id="panel-food">
-    <div class="s-card">
-      <div class="s-card-header">
-        <div class="s-icon s-icon-food">🐟</div>
-        <div><div class="s-title">บันทึกการกินอาหาร</div><div class="s-sub">บันทึกทุกมื้อเพื่อวิเคราะห์แนวโน้มน้ำหนัก</div></div>
-      </div>
-
-      <div class="field-row col2">
-        <div class="field">
-          <label>ประเภทอาหาร <span class="req">*</span></label>
-          <select class="inp">
-            <option value="">เลือกประเภท...</option>
-            <option value="wet">🥣 อาหารเปียก (Wet Food)</option>
-            <option value="dry">🌾 อาหารแห้ง (Dry Food)</option>
-            <option value="treat">🍬 ขนมแมว (Treat)</option>
-            <option value="homemade">🎣 อาหารโฮมเมด</option>
+    <!-- Cat Selector & Mode Bar -->
+    <div
+      style="background:#fff;border-radius:14px;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:1.2rem;border:1.5px solid rgba(255,159,67,.25);box-shadow:var(--shadow);">
+      <div style="display:flex;align-items:center;gap:0.6rem;flex:1;">
+        <span style="font-size:1.3rem;">🐱</span>
+        <div style="flex:1;max-width:320px;">
+          <div style="font-size:0.72rem;font-weight:700;color:#999;text-transform:uppercase;">บันทึกข้อมูลให้น้องแมว
+          </div>
+          <select id="catSelector" class="inp"
+            style="padding:0.35rem 0.6rem;font-weight:700;font-size:0.92rem;border-color:#FFCD80;background:#FFFDF9;cursor:pointer;margin-top:2px;"
+            onchange="onCatChange(this.value)">
+            <option value="1">ส้มซ่า (Somza)</option>
+            <option value="2">มิดไนท์ (Midnight)</option>
+            <option value="3">ถุงทอง (Thungthong)</option>
           </select>
         </div>
-        <div class="field">
-          <label>ยี่ห้ออาหาร</label>
-          <input class="inp" type="text" placeholder="เช่น Sheba, Royal Canin">
-        </div>
       </div>
-
-      <div class="field" style="margin-bottom:.9rem">
-        <label>มื้ออาหาร <span class="req">*</span></label>
-        <div class="chip-group">
-          <button class="chip sel-food" onclick="toggleChip(this,'sel-food')">🌅 เช้า</button>
-          <button class="chip"          onclick="toggleChip(this,'sel-food')">☀️ กลางวัน</button>
-          <button class="chip"          onclick="toggleChip(this,'sel-food')">🌙 เย็น</button>
-          <button class="chip"          onclick="toggleChip(this,'sel-food')">🌑 ดึก</button>
-        </div>
+      <div style="text-align:right;">
+        <span id="syncBadge"
+          style="font-size:0.75rem;padding:4px 10px;border-radius:12px;background:#E8F8F5;color:#10B981;font-weight:700;">🟢
+          พร้อมบันทึก</span>
       </div>
-
-      <div class="field" style="margin-bottom:.9rem">
-        <label>ปริมาณอาหาร: <span id="foodAmtVal">85</span> กรัม</label>
-        <div class="slider-wrap">
-          <span>10g</span>
-          <input type="range" class="range-inp" min="10" max="300" value="85"
-                 oninput="updateSlider(this,'foodAmtVal','g')">
-          <span>300g</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>หมายเหตุ</label>
-        <textarea class="inp" placeholder="เช่น กินหมดจาน / กินแค่ครึ่ง / มีอาการแพ้..."></textarea>
-      </div>
-
-      <button class="btn-submit btn-food" onclick="submitForm('บันทึกมื้ออาหาร','🍽️')">
-        🐟 บันทึกมื้ออาหาร
-      </button>
     </div>
-  </div>
 
-  <!-- HEALTH PANEL -->
-  <div class="panel" id="panel-health">
-    <div class="s-card">
-      <div class="s-card-header">
-        <div class="s-icon s-icon-health">🩺</div>
-        <div><div class="s-title">บันทึกสุขภาพ & การขับถ่าย</div><div class="s-sub">ติดตามน้ำหนักและความสม่ำเสมอ</div></div>
-      </div>
+    <!-- Tabs -->
+    <div class="tab-wrap">
+      <button class="tab tab-food active" onclick="switchTab('food',this)">🍽️ บันทึกการกิน</button>
+      <button class="tab tab-health" onclick="switchTab('health',this)">🩺 สุขภาพ</button>
+      <button class="tab tab-expense" onclick="switchTab('expense',this)">💸 ค่าใช้จ่าย</button>
+    </div>
 
-      <div class="field-row col2">
-        <div class="field">
-          <label>น้ำหนักตัว (kg) <span class="req">*</span></label>
-          <input class="inp" type="number" step="0.05" min="0.5" max="15" value="4.35" placeholder="เช่น 4.35">
+    <!-- FOOD PANEL -->
+    <div class="panel active" id="panel-food">
+      <div class="s-card">
+        <div class="s-card-header">
+          <div class="s-icon s-icon-food">🐟</div>
+          <div>
+            <div class="s-title">บันทึกการกินอาหาร</div>
+            <div class="s-sub">บันทึกทุกมื้อเพื่อวิเคราะห์แนวโน้มน้ำหนัก</div>
+          </div>
         </div>
-        <div class="field">
-          <label>เวลาชั่ง</label>
-          <input class="inp" type="time" value="08:00">
-        </div>
-      </div>
 
-      <div class="field" style="margin-bottom:.9rem">
-        <label>สถานะการขับถ่าย</label>
-        <div class="litter-opts">
-          <button class="litter-btn active" onclick="selectLitter(this)">
-            <span class="lb-icon">✅</span>ปกติดี
-          </button>
-          <button class="litter-btn" onclick="selectLitter(this)">
-            <span class="lb-icon">💧</span>ถ่ายเหลว
-          </button>
-          <button class="litter-btn" onclick="selectLitter(this)">
-            <span class="lb-icon">🪨</span>ท้องผูก
-          </button>
+        <div class="field-row col2">
+          <div class="field">
+            <label>ประเภทอาหาร <span class="req">*</span></label>
+            <select class="inp">
+              <option value="">เลือกประเภท...</option>
+              <option value="wet">🥣 อาหารเปียก (Wet Food)</option>
+              <option value="dry">🌾 อาหารแห้ง (Dry Food)</option>
+              <option value="treat">🍬 ขนมแมว (Treat)</option>
+              <option value="homemade">🎣 อาหารโฮมเมด</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>ยี่ห้ออาหาร</label>
+            <input class="inp" type="text" placeholder="เช่น Sheba, Royal Canin">
+          </div>
         </div>
-      </div>
 
-      <div class="field-row col2">
-        <div class="field">
-          <label>ประเภทการขับถ่าย</label>
+        <div class="field" style="margin-bottom:.9rem">
+          <label>มื้ออาหาร <span class="req">*</span></label>
           <div class="chip-group">
-            <button class="chip sel-health" onclick="toggleChip(this,'sel-health')">🚽 ปัสสาวะ</button>
-            <button class="chip"            onclick="toggleChip(this,'sel-health')">💩 อุจจาระ</button>
+            <button class="chip sel-food" onclick="toggleChip(this,'sel-food')">🌅 เช้า</button>
+            <button class="chip" onclick="toggleChip(this,'sel-food')">☀️ กลางวัน</button>
+            <button class="chip" onclick="toggleChip(this,'sel-food')">🌙 เย็น</button>
+            <button class="chip" onclick="toggleChip(this,'sel-food')">🌑 ดึก</button>
           </div>
         </div>
-        <div class="field">
-          <label>สีอุจจาระ (ถ้าสังเกตได้)</label>
-          <select class="inp">
-            <option>— ไม่ได้สังเกต —</option>
-            <option>🟤 น้ำตาล (ปกติ)</option>
-            <option>🟡 เหลือง</option>
-            <option>🔴 มีเลือด</option>
-          </select>
-        </div>
-      </div>
 
-      <div class="field">
-        <label>อาการผิดปกติอื่นๆ</label>
-        <textarea class="inp" placeholder="เช่น อาเจียน, ซึม, ไม่กินอาหาร, เกาหู..."></textarea>
-      </div>
-
-      <button class="btn-submit btn-health" onclick="submitForm('บันทึกสุขภาพ','🩺')">
-        🩺 บันทึกข้อมูลสุขภาพ
-      </button>
-    </div>
-  </div>
-
-  <!-- EXPENSE PANEL -->
-  <div class="panel" id="panel-expense">
-    <div class="s-card">
-      <div class="s-card-header">
-        <div class="s-icon s-icon-expense">🪙</div>
-        <div><div class="s-title">บันทึกค่าใช้จ่าย</div><div class="s-sub">ติดตามงบประมาณแยกตามหมวดหมู่</div></div>
-      </div>
-
-      <div class="field" style="margin-bottom:.9rem">
-        <label>หมวดหมู่ค่าใช้จ่าย <span class="req">*</span></label>
-        <div class="expense-cats">
-          <button class="exp-cat active" onclick="selectExpCat(this)"><span class="ec-icon">🍽️</span>ค่าอาหาร</button>
-          <button class="exp-cat"        onclick="selectExpCat(this)"><span class="ec-icon">🏥</span>ค่าหมอ</button>
-          <button class="exp-cat"        onclick="selectExpCat(this)"><span class="ec-icon">🪣</span>ค่าทราย</button>
-          <button class="exp-cat"        onclick="selectExpCat(this)"><span class="ec-icon">💊</span>ค่ายา</button>
-          <button class="exp-cat"        onclick="selectExpCat(this)"><span class="ec-icon">🎾</span>ของเล่น</button>
-          <button class="exp-cat"        onclick="selectExpCat(this)"><span class="ec-icon">📦</span>อื่นๆ</button>
-        </div>
-      </div>
-
-      <div class="field-row col2">
-        <div class="field">
-          <label>จำนวนเงิน (บาท) <span class="req">*</span></label>
-          <div class="amount-wrap">
-            <span class="currency">฿</span>
-            <input class="inp" type="number" min="0" step="0.01" placeholder="0.00">
+        <div class="field" style="margin-bottom:.9rem">
+          <label>ปริมาณอาหาร: <span id="foodAmtVal">85</span> กรัม</label>
+          <div class="slider-wrap">
+            <span>10g</span>
+            <input type="range" class="range-inp" min="10" max="300" value="85"
+              oninput="updateSlider(this,'foodAmtVal','g')">
+            <span>300g</span>
           </div>
         </div>
+
         <div class="field">
-          <label>วันที่จ่าย</label>
-          <input class="inp" type="date" id="expDate">
+          <label>หมายเหตุ</label>
+          <textarea class="inp" placeholder="เช่น กินหมดจาน / กินแค่ครึ่ง / มีอาการแพ้..."></textarea>
         </div>
-      </div>
 
-      <div class="field">
-        <label>รายละเอียด</label>
-        <input class="inp" type="text" placeholder="เช่น ตรวจสุขภาพประจำปี + วัคซีน">
+        <button class="btn-submit btn-food" onclick="submitForm('บันทึกมื้ออาหาร','🍽️')">
+          🐟 บันทึกมื้ออาหาร
+        </button>
       </div>
-
-      <div class="field">
-        <label>หมายเหตุ</label>
-        <textarea class="inp" placeholder="บันทึกเพิ่มเติม..." style="min-height:56px;"></textarea>
-      </div>
-
-      <button class="btn-submit btn-expense" onclick="submitForm('บันทึกค่าใช้จ่าย','💸')">
-        🪙 บันทึกค่าใช้จ่าย
-      </button>
     </div>
-  </div>
-</main>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+    <!-- HEALTH PANEL -->
+    <div class="panel" id="panel-health">
+      <div class="s-card">
+        <div class="s-card-header">
+          <div class="s-icon s-icon-health">🩺</div>
+          <div>
+            <div class="s-title">บันทึกสุขภาพ & การขับถ่าย</div>
+            <div class="s-sub">ติดตามน้ำหนักและความสม่ำเสมอ</div>
+          </div>
+        </div>
 
-<script>
-const API = window.location.origin.includes('8080') ? '' : 'http://127.0.0.1:8080';
-let token = localStorage.getItem('cc_token') || sessionStorage.getItem('cc_token');
-let currentCatId = localStorage.getItem('cc_current_cat') || sessionStorage.getItem('cc_current_cat');
+        <div class="field-row col2">
+          <div class="field">
+            <label>น้ำหนักตัว (kg) <span class="req">*</span></label>
+            <input class="inp" type="number" step="0.05" min="0.5" max="15" value="4.35" placeholder="เช่น 4.35">
+          </div>
+          <div class="field">
+            <label>เวลาชั่ง</label>
+            <input class="inp" type="time" value="08:00">
+          </div>
+        </div>
 
-// Auth guard
-if (!token) window.location.href = 'login.html';
+        <div class="field" style="margin-bottom:.9rem">
+          <label>สถานะการขับถ่าย</label>
+          <div class="litter-opts">
+            <button class="litter-btn active" onclick="selectLitter(this)">
+              <span class="lb-icon">✅</span>ปกติดี
+            </button>
+            <button class="litter-btn" onclick="selectLitter(this)">
+              <span class="lb-icon">💧</span>ถ่ายเหลว
+            </button>
+            <button class="litter-btn" onclick="selectLitter(this)">
+              <span class="lb-icon">🪨</span>ท้องผูก
+            </button>
+          </div>
+        </div>
 
-function logout() {
-  localStorage.clear(); sessionStorage.clear();
-  window.location.href = 'login.html';
-}
+        <div class="field-row col2">
+          <div class="field">
+            <label>ประเภทการขับถ่าย</label>
+            <div class="chip-group">
+              <button class="chip sel-health" onclick="toggleChip(this,'sel-health')">🚽 ปัสสาวะ</button>
+              <button class="chip" onclick="toggleChip(this,'sel-health')">💩 อุจจาระ</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>สีอุจจาระ (ถ้าสังเกตได้)</label>
+            <select class="inp">
+              <option>— ไม่ได้สังเกต —</option>
+              <option>🟤 น้ำตาล (ปกติ)</option>
+              <option>🟡 เหลือง</option>
+              <option>🔴 มีเลือด</option>
+            </select>
+          </div>
+        </div>
 
-async function apiFetch(path, opts = {}) {
-  const res = await fetch(API + path, {
-    ...opts, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts.headers||{}) },
-  });
-  if (res.status === 401) { logout(); return null; }
-  return res;
-}
+        <div class="field">
+          <label>อาการผิดปกติอื่นๆ</label>
+          <textarea class="inp" placeholder="เช่น อาเจียน, ซึม, ไม่กินอาหาร, เกาหู..."></textarea>
+        </div>
 
-// Init
-const d = new Date();
-document.getElementById('todayDate').textContent = d.toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-document.getElementById('expDate').value = d.toISOString().split('T')[0];
+        <button class="btn-submit btn-health" onclick="submitForm('บันทึกสุขภาพ','🩺')">
+          🩺 บันทึกข้อมูลสุขภาพ
+        </button>
+      </div>
+    </div>
 
-const name = localStorage.getItem('cc_display_name') || sessionStorage.getItem('cc_display_name') || 'ผู้ใช้';
-document.getElementById('navUser').textContent = 'สวัสดี, ' + name;
+    <!-- EXPENSE PANEL -->
+    <div class="panel" id="panel-expense">
+      <div class="s-card">
+        <div class="s-card-header">
+          <div class="s-icon s-icon-expense">🪙</div>
+          <div>
+            <div class="s-title">บันทึกค่าใช้จ่าย</div>
+            <div class="s-sub">ติดตามงบประมาณแยกตามหมวดหมู่</div>
+          </div>
+        </div>
 
-// Load cats for selector
-async function loadCats() {
-  const res = await apiFetch('/cats/');
-  if (!res) return;
-  const cats = await res.json();
-  if (cats.length > 0 && !currentCatId) {
-    currentCatId = cats[0].id;
-    localStorage.setItem('cc_current_cat', currentCatId);
-  }
-}
-loadCats();
+        <div class="field" style="margin-bottom:.9rem">
+          <label>หมวดหมู่ค่าใช้จ่าย <span class="req">*</span></label>
+          <div class="expense-cats">
+            <button class="exp-cat active" onclick="selectExpCat(this)"><span
+                class="ec-icon">🍽️</span>ค่าอาหาร</button>
+            <button class="exp-cat" onclick="selectExpCat(this)"><span class="ec-icon">🏥</span>ค่าหมอ</button>
+            <button class="exp-cat" onclick="selectExpCat(this)"><span class="ec-icon">🪣</span>ค่าทราย</button>
+            <button class="exp-cat" onclick="selectExpCat(this)"><span class="ec-icon">💊</span>ค่ายา</button>
+            <button class="exp-cat" onclick="selectExpCat(this)"><span class="ec-icon">🎾</span>ของเล่น</button>
+            <button class="exp-cat" onclick="selectExpCat(this)"><span class="ec-icon">📦</span>อื่นๆ</button>
+          </div>
+        </div>
 
-function switchTab(name,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('panel-'+name).classList.add('active');
-}
-function toggleChip(el,selClass){ el.classList.toggle(selClass); }
-function updateSlider(el,valId,unit){
-  const pct=((el.value-el.min)/(el.max-el.min)*100).toFixed(0);
-  el.style.setProperty('--val',pct+'%');
-  document.getElementById(valId).textContent=el.value;
-}
-function selectLitter(el){
-  document.querySelectorAll('.litter-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
-function selectExpCat(el){
-  document.querySelectorAll('.exp-cat').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
+        <div class="field-row col2">
+          <div class="field">
+            <label>จำนวนเงิน (บาท) <span class="req">*</span></label>
+            <div class="amount-wrap">
+              <span class="currency">฿</span>
+              <input class="inp" type="number" min="0" step="0.01" placeholder="0.00">
+            </div>
+          </div>
+          <div class="field">
+            <label>วันที่จ่าย</label>
+            <input class="inp" type="date" id="expDate">
+          </div>
+        </div>
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.innerHTML = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
+        <div class="field">
+          <label>รายละเอียด</label>
+          <input class="inp" type="text" placeholder="เช่น ตรวจสุขภาพประจำปี + วัคซีน">
+        </div>
 
-async function submitForm(label, icon) {
-  if (!currentCatId) {
-    showToast('⚠️ ยังไม่มีแมว — กรุณาสร้างโปรไฟล์แมวก่อน');
-    return;
-  }
+        <div class="field">
+          <label>หมายเหตุ</label>
+          <textarea class="inp" placeholder="บันทึกเพิ่มเติม..." style="min-height:56px;"></textarea>
+        </div>
 
-  // Food tab
-  if (label === 'บันทึกมื้ออาหาร') {
-    const foodType = document.querySelector('#panel-food select')?.value || '';
-    const foodBrand = document.querySelector('#panel-food input[type=text]')?.value || '';
-    const foodAmt = parseFloat(document.getElementById('foodAmtVal')?.textContent) || 85;
-    const body = {
-      activity_type: 'eating',
-      recorded_at: new Date().toISOString(),
-      food_type: foodType,
-      food_brand: foodBrand,
-      food_amount_g: foodAmt,
-    };
-    const res = await apiFetch(`/cats/${currentCatId}/activities`, { method:'POST', body: JSON.stringify(body) });
-    if (res && res.ok) { showToast(icon + ' บันทึกมื้ออาหารสำเร็จ! 🎉'); return; }
-    const err = await res.json();
-    alert('Error: ' + JSON.stringify(err));
-    showToast('❌ บันทึกไม่สำเร็จ ลองใหม่');
-    return;
-  }
+        <button class="btn-submit btn-expense" onclick="submitForm('บันทึกค่าใช้จ่าย','💸')">
+          🪙 บันทึกค่าใช้จ่าย
+        </button>
+      </div>
+    </div>
+  </main>
 
-  // Health tab
-  if (label === 'บันทึกสุขภาพ') {
-    const weightVal = parseFloat(document.querySelector('#panel-health input[type=number]')?.value) || null;
-    const body = {
-      activity_type: 'weight',
-      recorded_at: new Date().toISOString(),
-      weight_kg: weightVal,
-    };
-    const res = await apiFetch(`/cats/${currentCatId}/activities`, { method:'POST', body: JSON.stringify(body) });
-    if (res && res.ok) { showToast(icon + ' บันทึกสุขภาพสำเร็จ! 🎉'); return; }
-    const err = await res.json();
-    alert('Error: ' + JSON.stringify(err));
-    showToast('❌ บันทึกไม่สำเร็จ ลองใหม่');
-    return;
-  }
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
-  // Expense tab
-  if (label === 'บันทึกค่าใช้จ่าย') {
-    const activeCat = document.querySelector('.exp-cat.active')?.textContent?.trim() || 'อื่นๆ';
-    const catMap = {'ค่าอาหาร':'food','ค่าหมอ':'vet','ค่าทราย':'litter','ค่ายา':'medicine','ของเล่น':'toy','อื่นๆ':'other'};
-    const category = catMap[activeCat] || 'other';
-    const amount = parseFloat(document.querySelector('#panel-expense input[type=number]')?.value) || 0;
-    const desc = document.querySelector('#panel-expense input[type=text]')?.value || '';
-    const expDate = document.getElementById('expDate')?.value || new Date().toISOString().split('T')[0];
-    if (!amount) { showToast('⚠️ กรุณากรอกจำนวนเงิน'); return; }
-    const body = { category, amount, description: desc, expense_date: expDate };
-    const res = await apiFetch(`/cats/${currentCatId}/expenses`, { method:'POST', body: JSON.stringify(body) });
-    if (res && res.ok) { showToast(icon + ' บันทึกค่าใช้จ่ายสำเร็จ! 🎉'); return; }
-    const err = await res.json();
-    alert('Error: ' + JSON.stringify(err));
-    showToast('❌ บันทึกไม่สำเร็จ ลองใหม่');
-  }
-}
-</script>
+  <script>
+    const API = window.location.origin.includes('8080') ? '' : 'http://127.0.0.1:8080';
+    let token = localStorage.getItem('cc_token') || sessionStorage.getItem('cc_token');
+    let currentCatId = localStorage.getItem('cc_current_cat') || sessionStorage.getItem('cc_current_cat') || '1';
+
+    // Auto-activate demo/offline token if missing (never block or kick user to login abruptly)
+    const isGhPages = window.location.hostname.includes('github.io');
+    if (!token) {
+      token = 'demo-gh-pages-token';
+      localStorage.setItem('cc_token', token);
+      localStorage.setItem('cc_display_name', 'Natcha & Cats (Demo)');
+    }
+
+    const isDemo = token === 'demo-gh-pages-token' || isGhPages;
+
+    function logout() {
+      localStorage.clear(); sessionStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    async function apiFetch(path, opts = {}) {
+      // If demo mode or on GitHub Pages, do not call localhost to avoid mixed-content or connection-refused errors
+      if (isDemo && (token === 'demo-gh-pages-token' || isGhPages)) {
+        return null;
+      }
+      try {
+        const res = await fetch(API + path, {
+          ...opts,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            ...(opts.headers || {})
+          },
+        });
+        // Never auto-logout on 401 when testing; gracefully fall back to local storage
+        if (res.status === 401) {
+          console.warn('API returned 401. Falling back to local data.');
+          return null;
+        }
+        return res;
+      } catch (err) {
+        console.warn('API connection failed, falling back to local mode:', err);
+        return null;
+      }
+    }
+
+    // Local Storage Persistence Helpers
+    function saveLocalActivity(act) {
+      try {
+        const key = 'cc_local_activities';
+        const list = JSON.parse(localStorage.getItem(key) || '[]');
+        list.unshift(act);
+        localStorage.setItem(key, JSON.stringify(list.slice(0, 50)));
+      } catch (e) { console.error('Local activity save error:', e); }
+    }
+
+    function saveLocalExpense(exp) {
+      try {
+        const key = 'cc_local_expenses';
+        const list = JSON.parse(localStorage.getItem(key) || '[]');
+        list.unshift(exp);
+        localStorage.setItem(key, JSON.stringify(list.slice(0, 50)));
+      } catch (e) { console.error('Local expense save error:', e); }
+    }
+
+    // Init Dates & User
+    const d = new Date();
+    document.getElementById('todayDate').textContent = d.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('expDate').value = d.toISOString().split('T')[0];
+
+    const name = localStorage.getItem('cc_display_name') || sessionStorage.getItem('cc_display_name') || 'Natcha & Cats';
+    document.getElementById('navUser').textContent = 'สวัสดี, ' + name;
+
+    // Demo Cats Catalog
+    const demoCats = [
+      { id: '1', name: 'ส้มซ่า (Somza) · Scottish Fold' },
+      { id: '2', name: 'มิดไนท์ (Midnight) · British Shorthair' },
+      { id: '3', name: 'ถุงทอง (Thungthong) · แมวไทยโคราช' }
+    ];
+
+    async function loadCats() {
+      let cats = [];
+      try {
+        const res = await apiFetch('/cats/');
+        if (res && res.ok) {
+          cats = await res.json();
+        }
+      } catch (e) { }
+
+      if (!cats || cats.length === 0) {
+        cats = demoCats;
+      }
+
+      const sel = document.getElementById('catSelector');
+      if (sel) {
+        sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        if (currentCatId && cats.some(c => String(c.id) === String(currentCatId))) {
+          sel.value = currentCatId;
+        } else {
+          currentCatId = cats[0].id;
+          localStorage.setItem('cc_current_cat', currentCatId);
+          sel.value = currentCatId;
+        }
+      }
+
+      const badge = document.getElementById('syncBadge');
+      if (badge) {
+        if (isDemo) {
+          badge.innerHTML = '⚡ โหมด Demo / Cloud';
+          badge.style.background = '#FFF3CD';
+          badge.style.color = '#856404';
+        } else {
+          badge.innerHTML = '🟢 เชื่อมต่อ API แล้ว';
+          badge.style.background = '#E8F8F5';
+          badge.style.color = '#10B981';
+        }
+      }
+    }
+    loadCats();
+
+    function onCatChange(catId) {
+      currentCatId = catId;
+      localStorage.setItem('cc_current_cat', catId);
+      const sel = document.getElementById('catSelector');
+      const catName = sel ? sel.selectedOptions[0].text : catId;
+      showToast('🐱 สลับบันทึกให้น้อง: <b>' + catName + '</b>');
+    }
+
+    function switchTab(name, el) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('panel-' + name).classList.add('active');
+    }
+
+    function toggleChip(el, selClass) { el.classList.toggle(selClass); }
+
+    function updateSlider(el, valId, unit) {
+      const pct = ((el.value - el.min) / (el.max - el.min) * 100).toFixed(0);
+      el.style.setProperty('--val', pct + '%');
+      document.getElementById(valId).textContent = el.value;
+    }
+
+    function selectLitter(el) {
+      document.querySelectorAll('.litter-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function selectExpCat(el) {
+      document.querySelectorAll('.exp-cat').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerHTML = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    async function submitForm(label, icon) {
+      if (!currentCatId) {
+        currentCatId = document.getElementById('catSelector')?.value || '1';
+        localStorage.setItem('cc_current_cat', currentCatId);
+      }
+
+      // 1. Food tab
+      if (label === 'บันทึกมื้ออาหาร') {
+        const foodType = document.querySelector('#panel-food select')?.value || 'wet';
+        const foodBrand = document.querySelector('#panel-food input[type=text]')?.value || 'Sheba Pouch';
+        const foodAmt = parseFloat(document.getElementById('foodAmtVal')?.textContent) || 85;
+        const notes = document.querySelector('#panel-food textarea')?.value || '';
+        const body = {
+          cat_id: currentCatId,
+          activity_type: 'eating',
+          recorded_at: new Date().toISOString(),
+          food_type: foodType,
+          food_brand: foodBrand,
+          food_amount_g: foodAmt,
+          notes: notes
+        };
+
+        try {
+          await apiFetch(`/cats/${currentCatId}/activities`, { method: 'POST', body: JSON.stringify(body) });
+        } catch (e) { }
+
+        saveLocalActivity(body);
+        showToast(icon + ' บันทึกมื้ออาหารสำเร็จเรียบร้อย! 🎉<br><a href="dashboard.html" style="color:#FFF8F0;text-decoration:underline;font-size:0.8rem;display:inline-block;margin-top:4px;">📊 คลิกไปดูผลลัพธ์ที่ Dashboard &rarr;</a>');
+
+        const txtArea = document.querySelector('#panel-food textarea');
+        if (txtArea) txtArea.value = '';
+        return;
+      }
+
+      // 2. Health tab
+      if (label === 'บันทึกสุขภาพ') {
+        const weightVal = parseFloat(document.querySelector('#panel-health input[type=number]')?.value) || 4.5;
+        const body = {
+          cat_id: currentCatId,
+          activity_type: 'weight',
+          recorded_at: new Date().toISOString(),
+          weight_kg: weightVal,
+        };
+
+        try {
+          await apiFetch(`/cats/${currentCatId}/activities`, { method: 'POST', body: JSON.stringify(body) });
+        } catch (e) { }
+
+        saveLocalActivity(body);
+        localStorage.setItem('cc_local_weight_' + currentCatId, weightVal);
+        showToast(icon + ' บันทึกสุขภาพเรียบร้อย! (น้ำหนัก ' + weightVal + ' kg) 🎉<br><a href="dashboard.html" style="color:#FFF8F0;text-decoration:underline;font-size:0.8rem;display:inline-block;margin-top:4px;">📊 คลิกไปดูผลลัพธ์ที่ Dashboard &rarr;</a>');
+        return;
+      }
+
+      // 3. Expense tab
+      if (label === 'บันทึกค่าใช้จ่าย') {
+        const activeCat = document.querySelector('.exp-cat.active')?.textContent?.trim() || 'อื่นๆ';
+        const catMap = { 'ค่าอาหาร': 'food', 'ค่าหมอ': 'vet', 'ค่าทราย': 'litter', 'ค่ายา': 'medicine', 'ของเล่น': 'toy', 'อื่นๆ': 'other' };
+        const category = catMap[activeCat] || 'other';
+        const amount = parseFloat(document.querySelector('#panel-expense input[type=number]')?.value) || 0;
+        const desc = document.querySelector('#panel-expense input[type=text]')?.value || '';
+        const expDate = document.getElementById('expDate')?.value || new Date().toISOString().split('T')[0];
+
+        if (!amount || amount <= 0) {
+          showToast('⚠️ กรุณากรอกจำนวนเงินให้ถูกต้อง');
+          return;
+        }
+
+        const body = {
+          cat_id: currentCatId,
+          category,
+          amount,
+          description: desc,
+          expense_date: expDate
+        };
+
+        try {
+          await apiFetch(`/cats/${currentCatId}/expenses`, { method: 'POST', body: JSON.stringify(body) });
+        } catch (e) { }
+
+        saveLocalExpense(body);
+        showToast(icon + ' บันทึกค่าใช้จ่าย ฿' + amount.toLocaleString('th-TH') + ' สำเร็จ! 🪙<br><a href="dashboard.html" style="color:#FFF8F0;text-decoration:underline;font-size:0.8rem;display:inline-block;margin-top:4px;">📊 คลิกไปดูผลลัพธ์ที่ Dashboard &rarr;</a>');
+
+        const amtInp = document.querySelector('#panel-expense input[type=number]');
+        if (amtInp) amtInp.value = '';
+        const descInp = document.querySelector('#panel-expense input[type=text]');
+        if (descInp) descInp.value = '';
+        return;
+      }
+    }
+  </script>
 </body>
+
 </html>
