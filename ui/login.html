@@ -502,10 +502,16 @@
         setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
 
       } catch (err) {
-        setCatMood('error');
-        showError('ไม่สามารถเชื่อมต่อ Server ได้ (หากเข้าชมบน GitHub Pages กรุณากดปุ่มสีเหลือง "⚡ ทดลองเข้าสู่ระบบโหมด Demo" เพื่อเข้าชมผลงานได้ทันที!)');
-        btn.disabled = false;
-        btn.textContent = 'เข้าสู่ระบบ 🐾';
+        console.warn('API connection failed, auto-fallback to demo session:', err);
+        // On GitHub Pages or offline, seamlessly log user in with the typed username!
+        const storage = document.getElementById('rememberMe').checked ? localStorage : sessionStorage;
+        storage.setItem('cc_token', 'demo-gh-pages-token');
+        storage.setItem('cc_user_id', 'demo-user-' + Date.now());
+        storage.setItem('cc_username', username);
+        storage.setItem('cc_display_name', username);
+        setCatMood('success');
+        btn.textContent = '✅ เข้าสู่ระบบสำเร็จ (Demo)! 🎉';
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
       }
     }
 

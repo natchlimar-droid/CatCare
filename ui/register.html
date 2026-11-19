@@ -309,27 +309,76 @@ async function submitRegister() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>กำลังสมัคร...';
 
+  const isGhPages = window.location.hostname.includes('github.io');
+  const username = document.getElementById('username').value.trim() || 'Natcha';
+  const email = document.getElementById('email').value.trim();
+  const catBreed = document.getElementById('catBreed').value || 'สายพันธุ์ผสม (Mixed Breed)';
+  const catGender = document.getElementById('catGender').value || 'female';
+  const catBirth = document.getElementById('catBirth').value || '2024-12-30';
+  const catWeight = parseFloat(document.getElementById('catWeight').value) || 4.5;
+
+  // Complete registration locally (for GitHub Pages & Offline mode)
+  function completeLocalRegister() {
+    const userCat = {
+      id: 'custom-' + Date.now(),
+      name: catName,
+      breed: catBreed,
+      gender: catGender,
+      birth_date: catBirth,
+      weight: catWeight,
+      exp: 0,
+      avatar: selectedAvatar || '🐱'
+    };
+
+    localStorage.setItem('cc_token', 'demo-gh-pages-token');
+    localStorage.setItem('cc_user_id', 'user-' + Date.now());
+    localStorage.setItem('cc_username', username);
+    localStorage.setItem('cc_display_name', username + ' & ' + catName);
+    localStorage.setItem('cc_custom_cat', JSON.stringify(userCat));
+    localStorage.setItem('cc_current_cat', userCat.id);
+    localStorage.setItem('cc_local_weight_' + userCat.id, catWeight);
+
+    document.getElementById('previewCatName').textContent = catName;
+    document.getElementById('successIcon').textContent = selectedAvatar || '🐱';
+    document.getElementById('catFace').textContent = '🎊';
+    document.getElementById('catMood').textContent = 'สมัครสำเร็จ! ยินดีต้อนรับน้อง ' + catName + ' 🎉';
+    document.getElementById('regFooter').style.display = 'none';
+    goStep(3);
+  }
+
+  // If running on GitHub Pages, directly register locally
+  if (isGhPages) {
+    setTimeout(completeLocalRegister, 400);
+    return;
+  }
+
   try {
-    // 1. สมัครสมาชิก
+    // 1. สมัครสมาชิกผ่าน Backend API
     const regRes = await fetch(`${API}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        username:     document.getElementById('username').value.trim(),
-        email:        document.getElementById('email').value.trim(),
+        username:     username,
+        email:        email,
         password:     document.getElementById('password').value,
-        display_name: document.getElementById('username').value.trim(),
+        display_name: username,
         gender:       selectedGender || null,
       }),
     });
-    const regData = await regRes.json();
-    if (!regRes.ok) { showError(regData.detail || 'สมัครสมาชิกไม่สำเร็จ'); btn.disabled=false; btn.textContent='สมัครสมาชิก 🐾'; return; }
+    
+    if (!regRes.ok) {
+      const regData = await regRes.json();
+      showError(regData.detail || 'สมัครสมาชิกไม่สำเร็จ');
+      btn.disabled = false;
+      btn.textContent = 'สมัครสมาชิก 🐾';
+      return;
+    }
 
-    // บันทึก token
-    sessionStorage.setItem('cc_token',        regData.access_token);
-    sessionStorage.setItem('cc_user_id',      regData.user_id);
-    sessionStorage.setItem('cc_username',     regData.username);
-    sessionStorage.setItem('cc_display_name', regData.display_name);
+    const regData = await regRes.json();
+    localStorage.setItem('cc_token',        regData.access_token);
+    localStorage.setItem('cc_user_id',      regData.user_id);
+    localStorage.setItem('cc_username',     regData.username);
+    localStorage.setItem('cc_display_name', regData.display_name);
 
     // 2. สร้างโปรไฟล์แมว
     const catRes = await fetch(`${API}/cats/`, {
@@ -337,12 +386,16 @@ async function submitRegister() {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${regData.access_token}` },
       body: JSON.stringify({
         name:       catName,
-        breed:      document.getElementById('catBreed').value || null,
-        gender:     document.getElementById('catGender').value,
-        birth_date: document.getElementById('catBirth').value || null,
-        weight_kg:  parseFloat(document.getElementById('catWeight').value) || null,
+        breed:      catBreed,
+        gender:     catGender,
+        birth_date: catBirth,
+        weight_kg:  catWeight,
       }),
     });
+    if (catRes.ok) {
+      const newCat = await catRes.json();
+      localStorage.setItem('cc_current_cat', newCat.id);
+    }
 
     // 3. แสดง success
     document.getElementById('previewCatName').textContent = catName;
@@ -353,9 +406,9 @@ async function submitRegister() {
     goStep(3);
 
   } catch (err) {
-    showError('เกิดข้อผิดพลาด: ' + err.toString());
-    btn.disabled = false;
-    btn.textContent = 'สมัครสมาชิก 🐾';
+    console.warn('API fetch failed, falling back to local registration:', err);
+    // Graceful fallback to local register
+    completeLocalRegister();
   }
 }
 </script>

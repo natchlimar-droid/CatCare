@@ -251,6 +251,18 @@ function loadDemoMode() {
     { id: '2', name: 'มิดไนท์ (Midnight)', breed: 'British Shorthair', gender: 'female', birth_date: '2025-01-15', weight: 3.8, exp: 1650 },
     { id: '3', name: 'ถุงทอง (Thungthong)', breed: 'แมวไทยโคราช (Korat)', gender: 'male', birth_date: '2025-06-28', weight: 5.1, exp: 1100 }
   ];
+
+  // If user registered a custom cat from register.html (e.g. ซออา)
+  try {
+    const customCatStr = localStorage.getItem('cc_custom_cat');
+    if (customCatStr) {
+      const customCat = JSON.parse(customCatStr);
+      if (customCat && customCat.name && !cats.some(c => c.id === customCat.id)) {
+        cats.unshift(customCat);
+      }
+    }
+  } catch(e) {}
+
   document.getElementById('kpiCatCount').innerHTML = cats.length + ' <span>ตัว</span>';
   const sel = document.getElementById('catSelect');
   sel.innerHTML = cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');

@@ -955,6 +955,19 @@
       { id: '3', name: 'ถุงทอง (Thungthong) · แมวไทยโคราช' }
     ];
 
+    try {
+      const customCatStr = localStorage.getItem('cc_custom_cat');
+      if (customCatStr) {
+        const customCat = JSON.parse(customCatStr);
+        if (customCat && customCat.name && !demoCats.some(c => c.id === customCat.id)) {
+          demoCats.unshift({
+            id: customCat.id,
+            name: customCat.name + (customCat.breed ? ' · ' + customCat.breed : '')
+          });
+        }
+      }
+    } catch (e) {}
+
     async function loadCats() {
       let cats = [];
       try {
