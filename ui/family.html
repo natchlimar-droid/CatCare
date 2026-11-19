@@ -317,39 +317,44 @@
 
   <!-- TODAY'S CARE SHIFT -->
   <div class="sec-card">
-    <div class="sec-title">📅 ตารางเวรดูแลวันนี้</div>
-
-    <div class="shift-row">
-      <div class="shift-left">
-        <div class="shift-icon" style="background:#FFF4E5;color:#FF9F43">🌅</div>
-        <div>
-          <div class="shift-title">อาหารมื้อเช้า (อาหารเปียก)</div>
-          <div class="shift-assignee">เวรของ: <b>คุณแม่</b> · เวลา 07:30 น.</div>
-        </div>
-      </div>
-      <span class="shift-badge sb-done">✅ ให้อาหารแล้ว</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.9rem;">
+      <div class="sec-title" style="margin-bottom:0;">📅 ตารางเวรดูแลวันนี้</div>
+      <button onclick="addNewShiftPrompt()" style="background:#FFF4E5;color:var(--primary-dark);border:1px solid #FFCD80;padding:4px 10px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">➕ เพิ่มเวร</button>
     </div>
 
-    <div class="shift-row">
-      <div class="shift-left">
-        <div class="shift-icon" style="background:#EFF6FF;color:#2563EB">💊</div>
-        <div>
-          <div class="shift-title">ป้อนยาปฏิชีวนะหลังอาหาร</div>
-          <div class="shift-assignee">เวรของ: <b>คุณพ่อ</b> · เวลา 12:00 น.</div>
+    <div id="shiftList">
+      <div class="shift-row" onclick="toggleShift(this, 'อาหารมื้อเช้า')">
+        <div class="shift-left">
+          <div class="shift-icon" style="background:#FFF4E5;color:#FF9F43">🌅</div>
+          <div>
+            <div class="shift-title">อาหารมื้อเช้า (อาหารเปียก)</div>
+            <div class="shift-assignee">เวรของ: <b>คุณแม่</b> · เวลา 07:30 น.</div>
+          </div>
         </div>
+        <span class="shift-badge sb-done">✅ ให้อาหารแล้ว</span>
       </div>
-      <span class="shift-badge sb-pending" id="medBadge">⏰ รอป้อนยา</span>
-    </div>
 
-    <div class="shift-row">
-      <div class="shift-left">
-        <div class="shift-icon" style="background:#F3E8FF;color:#9333EA">🪣</div>
-        <div>
-          <div class="shift-title">ตักทรายแมว &amp; เช็ดกระบะ</div>
-          <div class="shift-assignee">เวรของ: <b>พี่สาว</b> · ช่วง 18:00 น.</div>
+      <div class="shift-row" onclick="toggleShift(this, 'ป้อนยาปฏิชีวนะ')">
+        <div class="shift-left">
+          <div class="shift-icon" style="background:#EFF6FF;color:#2563EB">💊</div>
+          <div>
+            <div class="shift-title">ป้อนยาปฏิชีวนะหลังอาหาร</div>
+            <div class="shift-assignee">เวรของ: <b>คุณพ่อ</b> · เวลา 12:00 น.</div>
+          </div>
         </div>
+        <span class="shift-badge sb-pending" id="medBadge">⏰ รอป้อนยา</span>
       </div>
-      <span class="shift-badge sb-pending">📌 เวรช่วงเย็น</span>
+
+      <div class="shift-row" onclick="toggleShift(this, 'ตักทรายแมว')">
+        <div class="shift-left">
+          <div class="shift-icon" style="background:#F3E8FF;color:#9333EA">🪣</div>
+          <div>
+            <div class="shift-title">ตักทรายแมว &amp; เช็ดกระบะ</div>
+            <div class="shift-assignee">เวรของ: <b>พี่สาว</b> · ช่วง 18:00 น.</div>
+          </div>
+        </div>
+        <span class="shift-badge sb-pending">📌 เวรช่วงเย็น</span>
+      </div>
     </div>
   </div>
 
@@ -368,7 +373,7 @@
           <span style="font-size:0.7rem;background:rgba(255,255,255,0.25);padding:2px 6px;border-radius:6px">ด่วนวันนี้</span>
         </div>
         <div class="line-card-body">
-          <div style="font-size:0.8rem;color:var(--primary);font-weight:700">🐱 เวรดูแลน้องส้มซ่า</div>
+          <div style="font-size:0.8rem;color:var(--primary);font-weight:700" id="lineCatTitle">🐱 เวรดูแลน้องส้มซ่า</div>
           <div style="font-size:1.05rem;font-weight:800;color:var(--dark);margin:2px 0 6px">💊 ถึงเวลาป้อนยาฆ่าเชื้อ (รอบเที่ยง)</div>
           <div style="font-size:0.82rem;color:#555;background:#FFF9F0;padding:8px 10px;border-radius:8px">
             👨‍💼 <b>ผู้รับผิดชอบ:</b> คุณพ่อ<br>
@@ -382,7 +387,7 @@
 
       <div id="lineReplyBox" style="display:none;background:#DCFCE7;border-radius:10px;padding:8px 12px;margin-top:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1)">
         <div style="font-size:0.75rem;font-weight:800;color:#166534">👨‍💼 คุณพ่อ (ผ่าน LINE):</div>
-        <div style="font-size:0.82rem;color:#166534">"ป้อนยาน้องส้มซ่าเรียบร้อยแล้วครับ น้องทานง่ายมาก 👍"</div>
+        <div style="font-size:0.82rem;color:#166534" id="lineReplyMsg">"ป้อนยาน้องส้มซ่าเรียบร้อยแล้วครับ น้องทานง่ายมาก 👍"</div>
         <div style="font-size:0.68rem;color:#047857;text-align:right;margin-top:2px">บันทึกเข้าระบบ CatCare แล้ว · 12:05 น.</div>
       </div>
     </div>
@@ -434,9 +439,27 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// Determine active cat name
+let activeCatName = 'น้องส้มซ่า';
+try {
+  const customStr = localStorage.getItem('cc_custom_cat');
+  if (customStr) {
+    const c = JSON.parse(customStr);
+    if (c && c.name) activeCatName = 'น้อง' + c.name;
+  }
+} catch (e) {}
+
+// Update LINE preview with active cat name
+document.addEventListener('DOMContentLoaded', () => {
+  const titleEl = document.getElementById('lineCatTitle');
+  const msgEl = document.getElementById('lineReplyMsg');
+  if (titleEl) titleEl.textContent = '🐱 เวรดูแล' + activeCatName;
+  if (msgEl) msgEl.textContent = `"ป้อนยา${activeCatName}เรียบร้อยแล้วครับ น้องทานง่ายมาก 👍"`;
+});
+
 function copyInvite() {
   navigator.clipboard.writeText('CAT-HOME-8899').then(() => {
-    showToast('📋 คัดลอกรหัสเชิญครอบครัวเรียบร้อย!');
+    showToast('📋 คัดลอกรหัสเชิญครอบครัว (CAT-HOME-8899) เรียบร้อย!');
   }).catch(() => {
     showToast('📋 รหัสเชิญ: CAT-HOME-8899');
   });
@@ -455,11 +478,52 @@ function simLineCheckin() {
   btn.innerHTML = '✨ บันทึกแล้ว!';
   btn.style.background = '#64748B';
 
-  document.getElementById('medBadge').className = 'shift-badge sb-done';
-  document.getElementById('medBadge').textContent = '✅ ป้อนยาแล้ว (12:05)';
+  const badge = document.getElementById('medBadge');
+  if (badge) {
+    badge.className = 'shift-badge sb-done';
+    badge.textContent = '✅ ป้อนยาแล้ว (12:05)';
+  }
 
   document.getElementById('lineReplyBox').style.display = 'block';
   showToast('🎉 คุณพ่ออัปเดตสถานะสำเร็จ! สมาชิกในบ้านได้รับแจ้งเตือนใน LINE แล้ว');
+}
+
+function toggleShift(rowEl, taskName) {
+  const badge = rowEl.querySelector('.shift-badge');
+  if (!badge) return;
+  const isDone = badge.classList.contains('sb-done');
+  if (isDone) {
+    badge.className = 'shift-badge sb-pending';
+    badge.textContent = '⏰ รอทำ';
+    showToast('↩️ ยกเลิกสถานะ: ' + taskName);
+  } else {
+    badge.className = 'shift-badge sb-done';
+    badge.textContent = '✅ ทำเรียบร้อยแล้ว';
+    showToast('✨ บันทึกเรียบร้อย: ' + taskName + ' (ซิงค์ LINE แล้ว)');
+  }
+}
+
+function addNewShiftPrompt() {
+  const task = prompt('กรอกชื่อกิจกรรม/เวรที่ต้องการเพิ่ม (เช่น แปรงขน, เล่นของเล่น, ล้างชามน้ำ):');
+  if (!task || !task.trim()) return;
+  const assignee = prompt('ผู้รับผิดชอบ (เช่น คุณแม่, คุณพ่อ, พี่สาว):') || 'คุณแม่';
+  
+  const list = document.getElementById('shiftList');
+  const newRow = document.createElement('div');
+  newRow.className = 'shift-row';
+  newRow.onclick = function() { toggleShift(this, task); };
+  newRow.innerHTML = `
+    <div class="shift-left">
+      <div class="shift-icon" style="background:#E0F2FE;color:#0284C7">🐾</div>
+      <div>
+        <div class="shift-title">${task}</div>
+        <div class="shift-assignee">เวรของ: <b>${assignee}</b> · กำหนดวันนี้</div>
+      </div>
+    </div>
+    <span class="shift-badge sb-pending">⏰ รอทำ</span>
+  `;
+  list.appendChild(newRow);
+  showToast('➕ เพิ่มเวรใหม่: ' + task + ' มอบหมายให้ ' + assignee + ' เรียบร้อย!');
 }
 </script>
 </body>

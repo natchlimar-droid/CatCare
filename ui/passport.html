@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,7 +9,9 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1A365D">
   <link rel="apple-touch-icon" href="icon.svg">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Prompt:wght@500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Prompt:wght@500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=Cinzel:wght@700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --navy: #1A365D;
@@ -24,7 +27,14 @@
       --gray: #64748B;
       --radius: 20px;
     }
-    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       font-family: 'Sarabun', sans-serif;
       background: linear-gradient(180deg, #EDF2F7 0%, #FFFDF9 100%);
@@ -32,7 +42,14 @@
       min-height: 100vh;
       padding-bottom: 84px;
     }
-    h1, h2, h3, h4, .brand-font { font-family: 'Prompt', 'Plus Jakarta Sans', sans-serif; }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    .brand-font {
+      font-family: 'Prompt', 'Plus Jakarta Sans', sans-serif;
+    }
 
     /* Top Nav */
     nav {
@@ -47,6 +64,7 @@
       top: 0;
       z-index: 100;
     }
+
     .nav-brand {
       font-size: 1.15rem;
       font-weight: 800;
@@ -55,7 +73,11 @@
       align-items: center;
       gap: 6px;
     }
-    .nav-brand span { color: var(--gold); }
+
+    .nav-brand span {
+      color: var(--gold);
+    }
+
     .cat-selector-pill {
       background: #FFFDF5;
       border: 1.5px solid var(--gold);
@@ -86,6 +108,7 @@
       overflow: hidden;
       margin-bottom: 1.5rem;
     }
+
     .passport-container::after {
       content: "🐾 OFFICIAL FELINE PASSPORT";
       position: absolute;
@@ -97,6 +120,7 @@
       white-space: nowrap;
       pointer-events: none;
     }
+
     .passport-header {
       display: flex;
       justify-content: space-between;
@@ -105,6 +129,7 @@
       padding-bottom: 0.8rem;
       margin-bottom: 1.2rem;
     }
+
     .passport-title {
       font-family: 'Cinzel', serif;
       font-size: 1.15rem;
@@ -113,6 +138,7 @@
       color: var(--gold);
       text-transform: uppercase;
     }
+
     .passport-emblem {
       font-size: 1.4rem;
     }
@@ -123,6 +149,7 @@
       align-items: center;
       margin-bottom: 1.2rem;
     }
+
     .passport-avatar {
       width: 88px;
       height: 88px;
@@ -134,23 +161,27 @@
       justify-content: center;
       font-size: 3.2rem;
       flex-shrink: 0;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
+
     .passport-primary-info {
       flex: 1;
     }
+
     .cat-name-h {
       font-size: 1.5rem;
       font-weight: 800;
       color: #FFF;
       line-height: 1.2;
     }
+
     .cat-breed-sub {
       color: var(--gold-light);
       font-size: 0.85rem;
       font-weight: 600;
       margin: 2px 0 6px;
     }
+
     .microchip-badge {
       display: inline-flex;
       align-items: center;
@@ -175,12 +206,14 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       margin-bottom: 1.2rem;
     }
+
     .spec-item .label {
       font-size: 0.68rem;
       color: #94A3B8;
       text-transform: uppercase;
       font-weight: 600;
     }
+
     .spec-item .value {
       font-size: 0.95rem;
       font-weight: 700;
@@ -198,15 +231,18 @@
       border-radius: 14px;
       border: 1px dashed rgba(212, 175, 55, 0.4);
     }
+
     .qr-text {
       font-size: 0.78rem;
       color: #CBD5E1;
     }
+
     .qr-text b {
       color: var(--gold);
       display: block;
       font-size: 0.88rem;
     }
+
     .qr-code-img {
       border-radius: 8px;
       background: white;
@@ -218,10 +254,11 @@
       background: white;
       border-radius: var(--radius);
       padding: 1.3rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
       border: 1px solid #E2E8F0;
       margin-bottom: 1.2rem;
     }
+
     .sec-title {
       font-size: 1.05rem;
       font-weight: 700;
@@ -240,8 +277,17 @@
       padding: 0.75rem 0;
       border-bottom: 1px solid #F1F5F9;
     }
-    .vac-item:last-child { border-bottom: none; }
-    .vac-left { display: flex; align-items: center; gap: 10px; }
+
+    .vac-item:last-child {
+      border-bottom: none;
+    }
+
+    .vac-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .vac-icon {
       width: 38px;
       height: 38px;
@@ -254,16 +300,34 @@
       font-size: 1.2rem;
       flex-shrink: 0;
     }
-    .vac-name { font-weight: 700; font-size: 0.88rem; color: var(--dark); }
-    .vac-date { font-size: 0.75rem; color: var(--gray); }
+
+    .vac-name {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--dark);
+    }
+
+    .vac-date {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+
     .status-badge {
       font-size: 0.72rem;
       font-weight: 700;
       padding: 3px 10px;
       border-radius: 50px;
     }
-    .st-done { background: #DCFCE7; color: #166534; }
-    .st-soon { background: #FEF3C7; color: #92400E; }
+
+    .st-done {
+      background: #DCFCE7;
+      color: #166534;
+    }
+
+    .st-soon {
+      background: #FEF3C7;
+      color: #92400E;
+    }
 
     /* Quick Export Buttons */
     .export-grid {
@@ -272,6 +336,7 @@
       gap: 0.75rem;
       margin-top: 0.5rem;
     }
+
     .btn-exp {
       padding: 0.75rem;
       border-radius: 12px;
@@ -288,6 +353,7 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+
     .btn-exp:hover {
       background: #F8FAFC;
       border-color: var(--gold);
@@ -304,7 +370,11 @@
       outline: none;
       margin-bottom: 0.8rem;
     }
-    .search-box:focus { border-color: var(--primary); }
+
+    .search-box:focus {
+      border-color: var(--primary);
+    }
+
     .toxic-pill {
       display: inline-flex;
       align-items: center;
@@ -331,8 +401,9 @@
       justify-content: space-around;
       padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
       z-index: 1000;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
     }
+
     .b-nav-item {
       display: flex;
       flex-direction: column;
@@ -344,11 +415,15 @@
       gap: 2px;
       transition: 0.2s;
     }
+
     .b-nav-item.active {
       color: #D4AF37;
       font-weight: 700;
     }
-    .b-nav-item .b-icon { font-size: 1.3rem; }
+
+    .b-nav-item .b-icon {
+      font-size: 1.3rem;
+    }
 
     /* Toast */
     .toast {
@@ -362,7 +437,7 @@
       border-radius: 50px;
       font-size: 0.85rem;
       font-weight: 700;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -370,266 +445,281 @@
       text-align: center;
       white-space: nowrap;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
+
 <body>
 
-<nav>
-  <div class="nav-brand">CatCare <span>Passport</span> 🪪</div>
-  <select id="catSelector" class="cat-selector-pill" onchange="switchCat(this.value)">
-    <!-- Populated dynamically -->
-  </select>
-</nav>
+  <nav>
+    <div class="nav-brand">CatCare <span>Passport</span> 🪪</div>
+    <select id="catSelector" class="cat-selector-pill" onchange="switchCat(this.value)">
+      <!-- Populated dynamically -->
+    </select>
+  </nav>
 
-<main>
-  <!-- PASSPORT CARD -->
-  <div class="passport-container" id="passportCard">
-    <div class="passport-header">
-      <div class="passport-title">Pet Passport · พาสปอร์ตแมว</div>
-      <div class="passport-emblem">👑 🐾</div>
-    </div>
+  <main>
+    <!-- PASSPORT CARD -->
+    <div class="passport-container" id="passportCard">
+      <div class="passport-header">
+        <div class="passport-title">Pet Passport · พาสปอร์ตแมว</div>
+        <div class="passport-emblem">👑 🐾</div>
+      </div>
 
-    <div class="passport-body">
-      <div class="passport-avatar" id="avatarDisplay">🐱</div>
-      <div class="passport-primary-info">
-        <div class="cat-name-h" id="passportName">ส้มซ่า (Somza)</div>
-        <div class="cat-breed-sub" id="passportBreed">Scottish Fold · เพศผู้</div>
-        <div class="microchip-badge">
-          <span>📡 CHIP:</span>
-          <span id="microchipVal">TH-985141002348911</span>
+      <div class="passport-body">
+        <div class="passport-avatar" id="avatarDisplay">🐱</div>
+        <div class="passport-primary-info">
+          <div class="cat-name-h" id="passportName">ส้มซ่า (Somza)</div>
+          <div class="cat-breed-sub" id="passportBreed">Scottish Fold · เพศผู้</div>
+          <div class="microchip-badge">
+            <span>📡 CHIP:</span>
+            <span id="microchipVal">TH-985141002348911</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="specs-grid">
-      <div class="spec-item">
-        <div class="label">วันเกิด</div>
-        <div class="value" id="dobVal">10 พ.ย. 2024</div>
-      </div>
-      <div class="spec-item">
-        <div class="label">น้ำหนัก</div>
-        <div class="value" id="weightVal">4.5 kg</div>
-      </div>
-      <div class="spec-item">
-        <div class="label">สรีระ (BCS)</div>
-        <div class="value" style="color:#86EFAC" id="bcsVal">BCS 5/9 สมส่วน</div>
-      </div>
-    </div>
-
-    <div class="passport-footer">
-      <div class="qr-text">
-        <b>สแกนดูประวัติคลินิกสัตว์</b>
-        เชื่อมโยงข้อมูลวัคซีนและเวชระเบียน
-      </div>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=64x64&data=https://natchlimar-droid.github.io/CatCare/ui/passport.html" width="60" height="60" alt="QR Code" class="qr-code-img">
-    </div>
-  </div>
-
-  <!-- VACCINATION & MEDICAL HISTORY -->
-  <div class="sec-card">
-    <div class="sec-title">💉 ประวัติวัคซีนและการป้องกัน</div>
-    <div class="vac-item">
-      <div class="vac-left">
-        <div class="vac-icon">💉</div>
-        <div>
-          <div class="vac-name">วัคซีนรวมแมว (FVRCP Booster)</div>
-          <div class="vac-date">ครบกำหนด: 21 พ.ย. 2569 (รพ.สัตว์ทองหล่อ)</div>
+      <div class="specs-grid">
+        <div class="spec-item">
+          <div class="label">วันเกิด</div>
+          <div class="value" id="dobVal">10 พ.ย. 2024</div>
+        </div>
+        <div class="spec-item">
+          <div class="label">น้ำหนัก</div>
+          <div class="value" id="weightVal">4.5 kg</div>
+        </div>
+        <div class="spec-item">
+          <div class="label">สรีระ (BCS)</div>
+          <div class="value" style="color:#86EFAC" id="bcsVal">BCS 5/9 สมส่วน</div>
         </div>
       </div>
-      <span class="status-badge st-soon">อีก 2 วัน</span>
-    </div>
-    <div class="vac-item">
-      <div class="vac-left">
-        <div class="vac-icon">🛡️</div>
-        <div>
-          <div class="vac-name">วัคซีนพิษสุนัขบ้า (Rabies)</div>
-          <div class="vac-date">ฉีดแล้ว: 15 ม.ค. 2569 (มีผลถึง ม.ค. 2570)</div>
+
+      <div class="passport-footer">
+        <div class="qr-text">
+          <b>สแกนดูประวัติคลินิกสัตว์</b>
+          เชื่อมโยงข้อมูลวัคซีนและเวชระเบียน
         </div>
+        <img id="passportQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=CatCare" width="60"
+          height="60" alt="QR Code" class="qr-code-img">
       </div>
-      <span class="status-badge st-done">เรียบร้อย</span>
     </div>
-    <div class="vac-item">
-      <div class="vac-left">
-        <div class="vac-icon">💊</div>
-        <div>
-          <div class="vac-name">ยาถ่ายพยาธิ (Drontal Feline)</div>
-          <div class="vac-date">ป้อนแล้ว: 1 พ.ย. 2569</div>
-        </div>
+
+    <!-- VACCINATION & MEDICAL HISTORY -->
+    <div class="sec-card">
+      <div class="sec-title">💉 ประวัติวัคซีนและการป้องกัน</div>
+      <div id="vacListContainer">
+        <!-- Populated dynamically -->
       </div>
-      <span class="status-badge st-done">เรียบร้อย</span>
     </div>
+
+    <!-- CLINICAL EXPORT -->
+    <div class="sec-card">
+      <div class="sec-title">📄 ส่งออกเวชระเบียนสำหรับสัตวแพทย์</div>
+      <p style="font-size:0.83rem;color:var(--gray);margin-bottom:0.75rem">
+        ดาวน์โหลดประวัติสุขภาพเพื่อส่งให้คุณหมอที่คลินิกหรือโรงพยาบาลสัตว์
+      </p>
+      <div class="export-grid">
+        <button class="btn-exp" onclick="exportClinical('pdf')">
+          <span>📑</span> ดาวน์โหลด PDF
+        </button>
+        <button class="btn-exp" onclick="exportClinical('csv')">
+          <span>📊</span> ส่งออก CSV (Excel)
+        </button>
+      </div>
+    </div>
+
+    <!-- TOXIC FOOD & EMERGENCY RADAR -->
+    <div class="sec-card">
+      <div class="sec-title">⚠️ เรดาร์อาหารและพืชมีพิษ (Toxic Food Radar)</div>
+      <input type="text" id="foodSearch" class="search-box"
+        placeholder="🔍 ค้นหาชื่ออาหาร เช่น ลิลลี่, ช็อกโกแลต, ทูน่า..." oninput="filterToxic(this.value)">
+      <div id="toxicList">
+        <span class="toxic-pill">☠️ ดอกลิลลี่ (ไตวายเฉียบพลัน)</span>
+        <span class="toxic-pill">🍫 ช็อกโกแลต (ธีโอโบรมีน)</span>
+        <span class="toxic-pill">🧅 หัวหอม/กระเทียม (โลหิตจาง)</span>
+        <span class="toxic-pill">🍇 องุ่นและลูกเกด</span>
+        <span class="toxic-pill">☕ กาแฟ/คาเฟอีน</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav">
+    <a href="dashboard.html" class="b-nav-item">
+      <span class="b-icon">📊</span>
+      <span>สรุปผล</span>
+    </a>
+    <a href="data_entry.html" class="b-nav-item">
+      <span class="b-icon">📝</span>
+      <span>บันทึกด่วน</span>
+    </a>
+    <a href="family.html" class="b-nav-item">
+      <span class="b-icon">👨‍👩‍👧‍👦</span>
+      <span>ครอบครัว</span>
+    </a>
+    <a href="passport.html" class="b-nav-item active">
+      <span class="b-icon">🪪</span>
+      <span>พาสปอร์ต</span>
+    </a>
   </div>
 
-  <!-- CLINICAL EXPORT -->
-  <div class="sec-card">
-    <div class="sec-title">📄 ส่งออกเวชระเบียนสำหรับสัตวแพทย์</div>
-    <p style="font-size:0.83rem;color:var(--gray);margin-bottom:0.75rem">
-      ดาวน์โหลดประวัติสุขภาพเพื่อส่งให้คุณหมอที่คลินิกหรือโรงพยาบาลสัตว์
-    </p>
-    <div class="export-grid">
-      <button class="btn-exp" onclick="exportClinical('pdf')">
-        <span>📑</span> ดาวน์โหลด PDF
-      </button>
-      <button class="btn-exp" onclick="exportClinical('csv')">
-        <span>📊</span> ส่งออก CSV (Excel)
-      </button>
-    </div>
-  </div>
+  <div class="toast" id="toast"></div>
 
-  <!-- TOXIC FOOD & EMERGENCY RADAR -->
-  <div class="sec-card">
-    <div class="sec-title">⚠️ เรดาร์อาหารและพืชมีพิษ (Toxic Food Radar)</div>
-    <input type="text" id="foodSearch" class="search-box" placeholder="🔍 ค้นหาชื่ออาหาร เช่น ลิลลี่, ช็อกโกแลต, ทูน่า..." oninput="filterToxic(this.value)">
-    <div id="toxicList">
-      <span class="toxic-pill">☠️ ดอกลิลลี่ (ไตวายเฉียบพลัน)</span>
-      <span class="toxic-pill">🍫 ช็อกโกแลต (ธีโอโบรมีน)</span>
-      <span class="toxic-pill">🧅 หัวหอม/กระเทียม (โลหิตจาง)</span>
-      <span class="toxic-pill">🍇 องุ่นและลูกเกด</span>
-      <span class="toxic-pill">☕ กาแฟ/คาเฟอีน</span>
-    </div>
-  </div>
-</main>
+  <script>
+    const defaultCats = [
+      { id: '1', name: 'ส้มซ่า (Somza)', breed: 'Scottish Fold', gender: 'male', birth_date: '2024-11-10', weight: 4.5, bcs: 'BCS 5/9 สมส่วน', chip: 'TH-985141002348911', avatar: '🐱' },
+      { id: '2', name: 'มิดไนท์ (Midnight)', breed: 'British Shorthair', gender: 'female', birth_date: '2025-01-15', weight: 3.8, bcs: 'BCS 4/9 หุ่นเพรียว', chip: 'TH-985141002348912', avatar: '🐈‍⬛' },
+      { id: '3', name: 'ถุงทอง (Thungthong)', breed: 'แมวไทยโคราช (Korat)', gender: 'male', birth_date: '2025-06-28', weight: 5.1, bcs: 'BCS 6/9 ท้วมเล็กน้อย', chip: 'TH-985141002348913', avatar: '🦁' }
+    ];
 
-<!-- BOTTOM NAVIGATION -->
-<div class="bottom-nav">
-  <a href="dashboard.html" class="b-nav-item">
-    <span class="b-icon">📊</span>
-    <span>สรุปผล</span>
-  </a>
-  <a href="data_entry.html" class="b-nav-item">
-    <span class="b-icon">📝</span>
-    <span>บันทึกด่วน</span>
-  </a>
-  <a href="family.html" class="b-nav-item">
-    <span class="b-icon">👨‍👩‍👧‍👦</span>
-    <span>ครอบครัว</span>
-  </a>
-  <a href="passport.html" class="b-nav-item active">
-    <span class="b-icon">🪪</span>
-    <span>พาสปอร์ต</span>
-  </a>
-</div>
+    let allCats = [...defaultCats];
 
-<div class="toast" id="toast"></div>
+    // Check for newly registered cat (e.g. ซออา)
+    try {
+      const customStr = localStorage.getItem('cc_custom_cat');
+      if (customStr) {
+        const c = JSON.parse(customStr);
+        if (c && c.name) {
+          allCats.unshift({
+            id: c.id,
+            name: c.name,
+            breed: c.breed || 'สายพันธุ์ผสม',
+            gender: c.gender || 'female',
+            birth_date: c.birth_date || '2024-12-30',
+            weight: c.weight || 5.0,
+            bcs: 'BCS 5/9 สมส่วน',
+            chip: 'TH-985' + Math.floor(1000000000 + Math.random() * 9000000000),
+            avatar: c.avatar || '🐱'
+          });
+        }
+      }
+    } catch (e) { }
 
-<script>
-const defaultCats = [
-  { id: '1', name: 'ส้มซ่า (Somza)', breed: 'Scottish Fold', gender: 'male', birth_date: '2024-11-10', weight: 4.5, bcs: 'BCS 5/9 สมส่วน', chip: 'TH-985141002348911', avatar: '🐱' },
-  { id: '2', name: 'มิดไนท์ (Midnight)', breed: 'British Shorthair', gender: 'female', birth_date: '2025-01-15', weight: 3.8, bcs: 'BCS 4/9 หุ่นเพรียว', chip: 'TH-985141002348912', avatar: '🐈‍⬛' },
-  { id: '3', name: 'ถุงทอง (Thungthong)', breed: 'แมวไทยโคราช (Korat)', gender: 'male', birth_date: '2025-06-28', weight: 5.1, bcs: 'BCS 6/9 ท้วมเล็กน้อย', chip: 'TH-985141002348913', avatar: '🦁' }
-];
+    function init() {
+      const sel = document.getElementById('catSelector');
+      sel.innerHTML = allCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 
-let allCats = [...defaultCats];
-
-// Check for newly registered cat (e.g. ซออา)
-try {
-  const customStr = localStorage.getItem('cc_custom_cat');
-  if (customStr) {
-    const c = JSON.parse(customStr);
-    if (c && c.name) {
-      allCats.unshift({
-        id: c.id,
-        name: c.name,
-        breed: c.breed || 'สายพันธุ์ผสม',
-        gender: c.gender || 'female',
-        birth_date: c.birth_date || '2024-12-30',
-        weight: c.weight || 5.0,
-        bcs: 'BCS 5/9 สมส่วน',
-        chip: 'TH-985' + Math.floor(1000000000 + Math.random() * 9000000000),
-        avatar: c.avatar || '🐱'
-      });
+      const currentCatId = localStorage.getItem('cc_current_cat') || allCats[0].id;
+      sel.value = currentCatId;
+      renderPassport(currentCatId);
     }
-  }
-} catch(e) {}
 
-function init() {
-  const sel = document.getElementById('catSelector');
-  sel.innerHTML = allCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    function renderPassport(catId) {
+      const cat = allCats.find(c => String(c.id) === String(catId)) || allCats[0];
+      localStorage.setItem('cc_current_cat', cat.id);
 
-  const currentCatId = localStorage.getItem('cc_current_cat') || allCats[0].id;
-  sel.value = currentCatId;
-  renderPassport(currentCatId);
-}
+      // Check local weight override
+      const localWeight = parseFloat(localStorage.getItem('cc_local_weight_' + cat.id));
+      const effectiveWeight = (!isNaN(localWeight) && localWeight > 0) ? localWeight : cat.weight;
 
-function renderPassport(catId) {
-  const cat = allCats.find(c => String(c.id) === String(catId)) || allCats[0];
-  localStorage.setItem('cc_current_cat', cat.id);
+      document.getElementById('passportName').textContent = cat.name;
+      document.getElementById('passportBreed').textContent = cat.breed + ' · ' + (cat.gender === 'female' ? 'เพศเมีย' : 'เพศผู้');
+      document.getElementById('microchipVal').textContent = cat.chip;
+      document.getElementById('dobVal').textContent = cat.birth_date;
+      document.getElementById('weightVal').textContent = effectiveWeight + ' kg';
+      document.getElementById('bcsVal').textContent = cat.bcs;
+      document.getElementById('avatarDisplay').textContent = cat.avatar || '🐱';
 
-  // Check local weight override
-  const localWeight = parseFloat(localStorage.getItem('cc_local_weight_' + cat.id));
-  const effectiveWeight = (!isNaN(localWeight) && localWeight > 0) ? localWeight : cat.weight;
+      // Dynamic QR Code encoding cat health passport info
+      const qrData = `CatCare Passport | ${cat.name} | Chip: ${cat.chip} | Breed: ${cat.breed} | Weight: ${effectiveWeight}kg | Status: Healthy`;
+      const qrImg = document.getElementById('passportQrImg');
+      if (qrImg) {
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(qrData)}`;
+      }
 
-  document.getElementById('passportName').textContent = cat.name;
-  document.getElementById('passportBreed').textContent = cat.breed + ' · ' + (cat.gender==='female'?'เพศเมีย':'เพศผู้');
-  document.getElementById('microchipVal').textContent = cat.chip;
-  document.getElementById('dobVal').textContent = cat.birth_date;
-  document.getElementById('weightVal').textContent = effectiveWeight + ' kg';
-  document.getElementById('bcsVal').textContent = cat.bcs;
-  document.getElementById('avatarDisplay').textContent = cat.avatar || '🐱';
-}
+      // Dynamic Vaccines List per cat
+      const vacContainer = document.getElementById('vacListContainer');
+      if (vacContainer) {
+        const isNew = cat.id.startsWith('custom-');
+        const vacs = isNew ? [
+          { icon: '💉', name: 'วัคซีนรวมแมว (FVRCP เข็ม 1)', date: 'ฉีดแล้ว: 1 สัปดาห์ก่อน (คลินิก)', status: 'เรียบร้อย', cls: 'st-done' },
+          { icon: '🛡️', name: 'วัคซีนรวม FVRCP เข็มกระตุ้น', date: 'นัดหมายถัดไป: อีก 14 วัน', status: 'นัดหมาย', cls: 'st-soon' },
+          { icon: '💊', name: 'ถ่ายพยาธิและหยดยาป้องกันเห็บหมัด', date: 'ป้อนแล้วพร้อมตรวจสุขภาพ', status: 'เรียบร้อย', cls: 'st-done' }
+        ] : [
+          { icon: '💉', name: 'วัคซีนรวมแมว (FVRCP Booster)', date: 'ครบกำหนด: 21 พ.ย. 2569 (รพ.สัตว์ทองหล่อ)', status: 'อีก 2 วัน', cls: 'st-soon' },
+          { icon: '🛡️', name: 'วัคซีนพิษสุนัขบ้า (Rabies Vaccine)', date: 'ฉีดแล้ว: 15 ม.ค. 2569 (มีผลถึง ม.ค. 2570)', status: 'เรียบร้อย', cls: 'st-done' },
+          { icon: '💊', name: 'ยาถ่ายพยาธิ (Drontal Feline)', date: 'ป้อนแล้ว: 1 พ.ย. 2569 (ทุก 3 เดือน)', status: 'เรียบร้อย', cls: 'st-done' }
+        ];
 
-function switchCat(catId) {
-  renderPassport(catId);
-  showToast('🪪 เปลี่ยนพาสปอร์ตเป็น: ' + document.getElementById('catSelector').selectedOptions[0].text);
-}
+        vacContainer.innerHTML = vacs.map(v => `
+      <div class="vac-item">
+        <div class="vac-left">
+          <div class="vac-icon">${v.icon}</div>
+          <div>
+            <div class="vac-name">${v.name}</div>
+            <div class="vac-date">${v.date}</div>
+          </div>
+        </div>
+        <span class="status-badge ${v.cls}">${v.status}</span>
+      </div>
+    `).join('');
+      }
+    }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.innerHTML = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
+    function switchCat(catId) {
+      renderPassport(catId);
+      showToast('🪪 เปลี่ยนพาสปอร์ตเป็น: ' + document.getElementById('catSelector').selectedOptions[0].text);
+    }
 
-function exportClinical(type) {
-  const cat = allCats.find(c => String(c.id) === String(localStorage.getItem('cc_current_cat'))) || allCats[0];
-  if (type === 'csv') {
-    const csvContent = "\uFEFF" + "Record_Date,Cat_Name,Breed,Weight_kg,Status,Vaccine_History\n" +
-      `${new Date().toISOString().split('T')[0]},${cat.name},${cat.breed},${cat.weight},Healthy,FVRCP Booster due soon`;
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `CatCare_Clinical_${cat.name}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast('📊 ส่งออกไฟล์ CSV สำหรับคลินิกเรียบร้อย!');
-  } else {
-    showToast('📄 กำลังสร้างไฟล์ PDF เวชระเบียนพร้อมพิมพ์...');
-    setTimeout(() => {
-      window.print();
-    }, 700);
-  }
-}
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerHTML = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
 
-const toxicItems = [
-  'ดอกลิลลี่ (ไตวายเฉียบพลัน)',
-  'ช็อกโกแลต (ธีโอโบรมีน)',
-  'หัวหอม/กระเทียม (ทำลายเม็ดเลือดแดง)',
-  'องุ่นและลูกเกด (ไตวาย)',
-  'กาแฟ/ชา/คาเฟอีน',
-  'อะโวคาโด (เพอร์ซิน)',
-  'ถั่วแมคคาเดเมีย',
-  'ยาพาราเซตามอล (ห้ามเด็ดขาด อันตรายถึงชีวิต)'
-];
+    function exportClinical(type) {
+      const cat = allCats.find(c => String(c.id) === String(localStorage.getItem('cc_current_cat'))) || allCats[0];
+      if (type === 'csv') {
+        const csvContent = "\uFEFF" + "Record_Date,Cat_Name,Breed,Weight_kg,Status,Vaccine_History\n" +
+          `${new Date().toISOString().split('T')[0]},${cat.name},${cat.breed},${cat.weight},Healthy,FVRCP Booster due soon`;
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `CatCare_Clinical_${cat.name}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('📊 ส่งออกไฟล์ CSV สำหรับคลินิกเรียบร้อย!');
+      } else {
+        showToast('📄 กำลังสร้างไฟล์ PDF เวชระเบียนพร้อมพิมพ์...');
+        setTimeout(() => {
+          window.print();
+        }, 700);
+      }
+    }
 
-function filterToxic(q) {
-  const container = document.getElementById('toxicList');
-  if (!q.trim()) {
-    container.innerHTML = toxicItems.slice(0, 5).map(i => `<span class="toxic-pill">☠️ ${i}</span>`).join('');
-    return;
-  }
-  const filtered = toxicItems.filter(i => i.toLowerCase().includes(q.toLowerCase()));
-  if (filtered.length === 0) {
-    container.innerHTML = '<div style="font-size:0.85rem;color:#10B981;font-weight:700;padding:6px;">✅ ไม่พบในรายการพืช/อาหารอันตรายสูงสุด (ควรระวังหากสัตว์เลี้ยงมีอาการแพ้)</div>';
-  } else {
-    container.innerHTML = filtered.map(i => `<span class="toxic-pill">☠️ ${i}</span>`).join('');
-  }
-}
+    const toxicItems = [
+      'ดอกลิลลี่ (ไตวายเฉียบพลัน)',
+      'ช็อกโกแลต (ธีโอโบรมีน)',
+      'หัวหอม/กระเทียม (ทำลายเม็ดเลือดแดง)',
+      'องุ่นและลูกเกด (ไตวาย)',
+      'กาแฟ/ชา/คาเฟอีน',
+      'อะโวคาโด (เพอร์ซิน)',
+      'ถั่วแมคคาเดเมีย',
+      'ยาพาราเซตามอล (ห้ามเด็ดขาด อันตรายถึงชีวิต)'
+    ];
 
-window.onload = init;
-</script>
+    function filterToxic(q) {
+      const container = document.getElementById('toxicList');
+      if (!q.trim()) {
+        container.innerHTML = toxicItems.slice(0, 5).map(i => `<span class="toxic-pill">☠️ ${i}</span>`).join('');
+        return;
+      }
+      const filtered = toxicItems.filter(i => i.toLowerCase().includes(q.toLowerCase()));
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="font-size:0.85rem;color:#10B981;font-weight:700;padding:6px;">✅ ไม่พบในรายการพืช/อาหารอันตรายสูงสุด (ควรระวังหากสัตว์เลี้ยงมีอาการแพ้)</div>';
+      } else {
+        container.innerHTML = filtered.map(i => `<span class="toxic-pill">☠️ ${i}</span>`).join('');
+      }
+    }
+
+    window.onload = init;
+  </script>
 </body>
-</html>
 
+</html>
