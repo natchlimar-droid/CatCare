@@ -207,22 +207,74 @@ async function apiFetch(path, opts = {}) {
 }
 
 async function init() {
-  const name = localStorage.getItem('cc_display_name') || sessionStorage.getItem('cc_display_name') || 'ผู้ใช้';
+  const name = localStorage.getItem('cc_display_name') || sessionStorage.getItem('cc_display_name') || 'Natcha & Cats';
   document.getElementById('navUser').textContent = 'สวัสดี, ' + name;
   try {
+    if (token === 'demo-gh-pages-token') {
+      loadDemoMode();
+      return;
+    }
     cats = await apiFetch('/cats/') || [];
+    if (!cats || cats.length === 0) {
+      loadDemoMode();
+      return;
+    }
     document.getElementById('kpiCatCount').innerHTML = cats.length + ' <span>ตัว</span>';
     const sel = document.getElementById('catSelect');
-    sel.innerHTML = cats.length ? cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('') : '<option value="">ยังไม่มีแมว</option>';
-    if (cats.length > 0) await selectCat(cats[0].id);
-    else { document.getElementById('heroName').textContent='ยังไม่มีแมว'; renderDemoCharts(); }
-  } catch(e) { renderDemoCharts(); }
+    sel.innerHTML = cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    await selectCat(cats[0].id);
+  } catch(e) { 
+    loadDemoMode();
+  }
+}
+
+function loadDemoMode() {
+  cats = [
+    { id: '1', name: 'ส้มซ่า (Somza)', breed: 'Scottish Fold', gender: 'male', birth_date: '2024-11-10', weight: 4.5, exp: 2100 },
+    { id: '2', name: 'มิดไนท์ (Midnight)', breed: 'British Shorthair', gender: 'female', birth_date: '2025-01-15', weight: 3.8, exp: 1650 },
+    { id: '3', name: 'ถุงทอง (Thungthong)', breed: 'แมวไทยโคราช (Korat)', gender: 'male', birth_date: '2025-06-28', weight: 5.1, exp: 1100 }
+  ];
+  document.getElementById('kpiCatCount').innerHTML = cats.length + ' <span>ตัว</span>';
+  const sel = document.getElementById('catSelect');
+  sel.innerHTML = cats.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  selectCatDemo(cats[0]);
+}
+
+function selectCatDemo(cat) {
+  currentCatId = cat.id;
+  document.getElementById('heroName').textContent = cat.name + ' 🐾';
+  document.getElementById('heroBreed').textContent = cat.breed + ' · ' + (cat.gender==='female'?'เพศเมีย':'เพศผู้') + ' · เกิด ' + cat.birth_date;
+  document.getElementById('catSelect').value = cat.id;
+  
+  updateKPIs({
+    latest_weight: { kg: cat.weight, recorded_at: new Date() },
+    expense_this_month: cat.exp,
+    next_reminder: { title: 'นัดฉีดวัคซีนรวม FVRCP Booster', days_remaining: 2 }
+  });
+
+  renderReminders([
+    { title: 'นัดฉีดวัคซีนรวม FVRCP Booster', reminder_type: 'vaccine', days_remaining: 2, due_date: '2026-11-21', description: 'ครั้งที่ 2 ที่ รพ.สัตว์' },
+    { title: 'เปลี่ยนทรายแมวทั้งบ้าน', reminder_type: 'litter_change', days_remaining: 5, due_date: '2026-11-24', description: 'Unicharm Dual Power' },
+    { title: 'ป้อนยาถ่ายพยาธิ Drontal', reminder_type: 'medicine', days_remaining: 9, due_date: '2026-11-28', description: 'หลังอาหารเช้า' }
+  ]);
+
+  renderActivities([
+    { activity_type: 'eating', food_type: 'wet', food_amount_g: 85, food_brand: 'Sheba Pouch', recorded_at: new Date(Date.now() - 3600000*2) },
+    { activity_type: 'weight', weight_kg: cat.weight, recorded_at: new Date(Date.now() - 3600000*6) },
+    { activity_type: 'eating', food_type: 'dry', food_amount_g: 45, food_brand: 'Royal Canin', recorded_at: new Date(Date.now() - 3600000*12) }
+  ]);
+
+  renderDemoCharts();
 }
 
 async function selectCat(catId) {
   currentCatId = catId;
   const cat = cats.find(c=>c.id===catId);
   if (!cat) return;
+  if (token === 'demo-gh-pages-token') {
+    selectCatDemo(cat);
+    return;
+  }
   document.getElementById('heroName').textContent = cat.name + ' 🐾';
   document.getElementById('heroBreed').textContent = (cat.breed||'Mixed Breed') + ' · ' + (cat.gender==='female'?'เพศเมีย':'เพศผู้') + (cat.birth_date?' · เกิด '+cat.birth_date:'');
   document.getElementById('catSelect').value = catId;

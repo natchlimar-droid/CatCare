@@ -420,6 +420,9 @@
         <a href="#">ลืมรหัสผ่าน?</a>
       </div>
       <button type="submit" class="btn-login" id="loginBtn">เข้าสู่ระบบ 🐾</button>
+      <button type="button" onclick="loginDemo()" style="width:100%;margin-top:8px;padding:.75rem;background:#FEF3C7;color:#92400E;border:2px dashed #F59E0B;border-radius:14px;font-family:'Prompt',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:all .2s;">
+        ⚡ ทดลองเข้าสู่ระบบโหมด Demo (GitHub Pages Portfolio)
+      </button>
     </form>
 
     <div class="divider">หรือ</div>
@@ -500,10 +503,22 @@
 
       } catch (err) {
         setCatMood('error');
-        showError('ไม่สามารถเชื่อมต่อ server ได้ — ตรวจสอบว่า API กำลังรันอยู่ที่ localhost:8000');
+        showError('ไม่สามารถเชื่อมต่อ Server ได้ (หากเข้าชมบน GitHub Pages กรุณากดปุ่มสีเหลือง "⚡ ทดลองเข้าสู่ระบบโหมด Demo" เพื่อเข้าชมผลงานได้ทันที!)');
         btn.disabled = false;
         btn.textContent = 'เข้าสู่ระบบ 🐾';
       }
+    }
+
+    function loginDemo() {
+      const storage = localStorage;
+      storage.setItem('cc_token', 'demo-gh-pages-token');
+      storage.setItem('cc_user_id', 'demo-user-id');
+      storage.setItem('cc_username', 'demo_user');
+      storage.setItem('cc_display_name', 'Natcha & Cats (Demo)');
+      setCatMood('success');
+      const btn = document.getElementById('loginBtn');
+      btn.textContent = '🎉 เข้าสู่ระบบ Demo สำเร็จ!';
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 600);
     }
 
     // Auto-redirect ถ้า login แล้ว

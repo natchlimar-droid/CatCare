@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CatCare 🐾 — Full-Stack Pet Health, Activity & Expense Management</title>
+  <meta name="description" content="ระบบจัดการสุขภาพ โภชนาการ สรีระแมว (Feline BCS) พาสปอร์ตดิจิทัล และแจ้งเตือนผ่าน LINE Group อัตโนมัติ">
+  <link rel="icon" type="image/svg+xml" href="ui/icon.svg">
+  <link rel="manifest" href="ui/manifest.json">
+  <meta name="theme-color" content="#FF9F43">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Prompt:wght@500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #FF9F43;
+      --primary-dark: #EE801A;
+      --primary-light: #FFF4E5;
+      --secondary: #FF6B9D;
+      --accent: #10B981;
+      --accent-light: #E8F8F2;
+      --dark: #1E293B;
+      --card-bg: #FFFFFF;
+      --bg-cream: #FFFDF9;
+      --shadow-sm: 0 4px 12px rgba(30, 41, 59, 0.05);
+      --shadow-lg: 0 20px 40px -15px rgba(255, 159, 67, 0.2);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 50%, #F8FAFC 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    h1, h2, h3, h4, .brand-font { font-family: 'Prompt', 'Plus Jakarta Sans', sans-serif; }
+
+    /* ── Navbar ── */
+    header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 159, 67, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.85rem 1.5rem;
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--dark);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .logo span { color: var(--primary); }
+    .nav-badges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .badge-pill {
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .badge-online { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+    .badge-codespaces { background: #1E293B; color: #FFF; border: 1px solid #334155; }
+    .badge-codespaces:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 1100px;
+      margin: 3rem auto 2rem;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+    .hero-tag {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border: 1px solid #FFD093;
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: inline-block;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: #64748B;
+      max-width: 780px;
+      margin: 0 auto 2rem;
+    }
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 0.85rem 1.8rem;
+      border-radius: 14px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 700;
+      font-size: 0.98rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #FFB347);
+      color: white;
+      box-shadow: 0 8px 24px rgba(255, 159, 67, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 159, 67, 0.45);
+    }
+    .btn-secondary {
+      background: white;
+      color: var(--dark);
+      border: 1.5px solid #E2E8F0;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-secondary:hover {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+      transform: translateY(-2px);
+    }
+
+    /* ── Interactive Showcase Tabs ── */
+    .showcase-wrap {
+      max-width: 1100px;
+      margin: 2.5rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+    .tabs-bar {
+      display: flex;
+      gap: 0.6rem;
+      background: white;
+      padding: 0.5rem;
+      border-radius: 18px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #E2E8F0;
+      overflow-x: auto;
+      margin-bottom: 1.8rem;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      background: transparent;
+      border-radius: 12px;
+      font-family: 'Prompt', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 14px rgba(255, 159, 67, 0.3);
+    }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn 0.35s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Feature Cards ── */
+    .feature-card {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid #F1F5F9;
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ── Passport Card (Luxury Gold) ── */
+    .passport-box {
+      background: linear-gradient(135deg, #1A365D 0%, #0F2027 100%);
+      border: 3px solid #D4AF37;
+      border-radius: 20px;
+      padding: 2rem;
+      color: white;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+    }
+    .pass-header {
+      border-bottom: 2px solid #D4AF37;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pass-grid {
+      display: grid;
+      grid-template-columns: 120px 1fr 140px;
+      gap: 1.8rem;
+      align-items: center;
+    }
+    .pass-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 3px solid #D4AF37;
+    }
+    .pass-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+    .field-lbl { color: #D4AF37; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .field-val { font-weight: 700; color: #FFF; }
+    .vax-tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .vax-tag { background: rgba(212,175,55,0.2); border: 1px solid #D4AF37; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: #FFF; }
+    .qr-side {
+      background: white;
+      padding: 10px;
+      border-radius: 14px;
+      text-align: center;
+      color: #1A365D;
+    }
+
+    /* ── Calculator ── */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2rem;
+    }
+    .calc-slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 5px;
+      background: #E2E8F0;
+      outline: none;
+      margin: 15px 0;
+    }
+    .bcs-result-box {
+      background: var(--primary-light);
+      border-radius: 18px;
+      padding: 1.5rem;
+      border: 2px solid #FFD093;
+    }
+
+    /* ── Phone Mockup ── */
+    .phone-container {
+      background: #1E293B;
+      border-radius: 36px;
+      padding: 12px;
+      max-width: 350px;
+      margin: 0 auto;
+      border: 4px solid #334155;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+    }
+    .phone-body {
+      background: #849EB5;
+      border-radius: 26px;
+      padding: 12px 10px;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.8rem;
+    }
+
+    /* ── Grid 3 ── */
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .info-card {
+      background: white;
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #F1F5F9;
+    }
+    .info-card h4 { margin: 8px 0; font-size: 1.1rem; color: var(--dark); }
+    .info-card p { font-size: 0.88rem; color: #64748B; }
+
+    footer {
+      border-top: 1px solid #E2E8F0;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: #94A3B8;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .pass-grid { grid-template-columns: 1fr; text-align: center; }
+      .pass-avatar { margin: 0 auto; }
+      .calc-grid, .grid3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <a href="index.html" class="logo">Cat <span>Care</span> 🐾</a>
+    <div class="nav-badges">
+      <span class="badge-pill badge-online">🟢 GitHub Pages Live</span>
+      <a href="https://codespaces.new/natchlimar-droid/CatCare" target="_blank" class="badge-pill badge-codespaces">⚡ Codespaces</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-tag">🌟 Portfolio & Showcase · Full-Stack Pet Care Platform</div>
+    <h1>ระบบจัดการสุขภาพและโภชนาการแมว<br><span>CatCare Platform</span></h1>
+    <p>ระบบติดตามสุขภาพ สรีระแมว (Feline BCS 1-9) พาสปอร์ตดิจิทัลพร้อม QR Code เครื่องคำนวณโภชนาการ และระบบเวรดูแลในบ้านเชื่อมต่อ LINE Group อัตโนมัติ</p>
+    
+    <div class="cta-group">
+      <a href="ui/login.html" class="btn btn-primary">🚀 เข้าสู่ระบบ Web App (PWA Demo)</a>
+      <a href="https://codespaces.new/natchlimar-droid/CatCare" target="_blank" class="btn btn-secondary">⚡ เปิดรันบน GitHub Codespaces</a>
+      <a href="https://github.com/natchlimar-droid/CatCare" target="_blank" class="btn btn-secondary">⭐ ดู Source Code บน GitHub</a>
+    </div>
+  </section>
+
+  <!-- Interactive Showcase Tabs -->
+  <section class="showcase-wrap">
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab(0)">🪪 Pet Passport &amp; QR</button>
+      <button class="tab-btn" onclick="switchTab(1)">🩺 Feline BCS &amp; Calorie Calc</button>
+      <button class="tab-btn" onclick="switchTab(2)">💬 LINE Family Group Simulator</button>
+      <button class="tab-btn" onclick="switchTab(3)">📈 กราฟแนวโน้มน้ำหนักรายเดือน</button>
+    </div>
+
+    <!-- TAB 1: Digital Pet Passport -->
+    <div class="panel active">
+      <div class="feature-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px">
+          <div>
+            <h3 style="color:#1E293B;margin-bottom:4px">🐾 Digital Pet Passport &amp; Clinical Certification</h3>
+            <p style="color:#64748B;font-size:0.9rem">พาสปอร์ตดิจิทัลระดับสากล ออกแบบสำหรับยื่นคลินิก โรงพยาบาลสัตว์ หรือโรงแรมแมว</p>
+          </div>
+          <a href="ui/login.html" class="btn btn-primary" style="padding:0.5rem 1.2rem;font-size:0.85rem">ทดลองใช้ในแอปจริง ↗</a>
+        </div>
+
+        <div class="passport-box">
+          <div class="pass-header">
+            <div style="font-size:1.15rem;font-weight:800;letter-spacing:1px">KINGDOM OF CATCARE · PET PASSPORT</div>
+            <div style="font-size:0.85rem;color:#D4AF37">CHIP: 900215002981324</div>
+          </div>
+          <div class="pass-grid">
+            <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?q=80&w=400&auto=format&fit=crop" class="pass-avatar" alt="Cat Avatar">
+            <div>
+              <div class="pass-fields">
+                <div><div class="field-lbl">ชื่อสัตว์เลี้ยง (Name)</div><div class="field-val" style="font-size:1.25rem;color:#D4AF37">ส้มซ่า (Somza)</div></div>
+                <div><div class="field-lbl">เลขไมโครชิป (Microchip)</div><div class="field-val">900215002981324</div></div>
+                <div><div class="field-lbl">สายพันธุ์ (Breed)</div><div class="field-val">Scottish Fold (เพศผู้ · ทำหมันแล้ว)</div></div>
+                <div><div class="field-lbl">ดัชนีมวลกายสรีระ (BCS)</div><div class="field-val" style="color:#10B981">4.50 kg (ระดับ 5/9 สมส่วน ✅)</div></div>
+              </div>
+              <div class="vax-tags">
+                <span class="vax-tag">💉 พิษสุนัขบ้า (Rabies) 2026</span>
+                <span class="vax-tag">💉 หัด-หวัดแมว (FVRCP Booster)</span>
+                <span class="vax-tag">💊 ถ่ายพยาธิ Q4</span>
+              </div>
+            </div>
+            <div class="qr-side">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://natchlimar-droid.github.io/CatCare/ui/dashboard.html" width="110" height="110" alt="QR Code" style="border-radius:8px">
+              <div style="font-size:0.75rem;font-weight:700;margin-top:4px">สแกนดูประวัติคลินิก</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Live Calculator -->
+    <div class="panel">
+      <div class="feature-card">
+        <h3 style="color:#1E293B;margin-bottom:4px">🩺 Feline Body Condition Score (WSAVA 1-9) &amp; Calorie Calculator</h3>
+        <p style="color:#64748B;font-size:0.9rem;margin-bottom:1.5rem">ลากสไลเดอร์น้ำหนักเพื่อทดลองคำนวณคะแนนสรีระแมวและพลังงานขั้นต่ำ (RER/DER) แบบ Real-Time</p>
+
+        <div class="calc-grid">
+          <div>
+            <label style="font-weight:700">⚖️ น้ำหนักตัวแมว (Weight): <span id="wVal" style="color:var(--primary);font-size:1.3rem">4.5</span> kg</label>
+            <input type="range" min="2.0" max="8.5" step="0.1" value="4.5" class="calc-slider" id="wSlider" oninput="calcBCS(this.value)">
+            
+            <label style="font-weight:700;margin-top:1rem;display:block">🧬 สายพันธุ์ (Breed):</label>
+            <select id="breedSel" onchange="calcBCS(document.getElementById('wSlider').value)" style="width:100%;padding:10px;border-radius:12px;border:1.5px solid #CBD5E1;font-family:'Sarabun',sans-serif;margin-top:6px">
+              <option value="Scottish Fold">Scottish Fold (เกณฑ์มาตรฐาน: 3.5 - 5.5 kg)</option>
+              <option value="British Shorthair">British Shorthair (เกณฑ์มาตรฐาน: 4.0 - 7.0 kg)</option>
+              <option value="Korat">แมวไทยโคราช / สีสวาด (เกณฑ์มาตรฐาน: 3.0 - 4.5 kg)</option>
+              <option value="Domestic Shorthair">แมวไทยทั่วไป / Domestic (เกณฑ์มาตรฐาน: 3.2 - 5.0 kg)</option>
+            </select>
+          </div>
+
+          <div class="bcs-result-box">
+            <h4 style="margin:0 0 8px;color:#92400E">📋 ผลการประเมินสรีระ</h4>
+            <div style="font-size:1.8rem;font-weight:800;color:#1E293B" id="bcsScore">BCS 5 / 9</div>
+            <div id="bcsBadge" style="display:inline-block;padding:3px 10px;border-radius:20px;background:#10B981;color:white;font-weight:700;font-size:0.8rem;margin:4px 0 10px">สมส่วนสุขภาพดี (Ideal Weight)</div>
+            
+            <hr style="border:none;border-top:1px dashed #FFD093;margin:8px 0">
+            <div style="font-size:0.9rem;color:#475569">
+              🔥 <b>พลังงานพักผ่อน (RER):</b> <span id="rerVal">216</span> kcal/วัน<br>
+              ⚡ <b>พลังงานที่ต้องการจริง (DER):</b> <span id="derVal">259</span> kcal/วัน<br>
+              🥣 <b>อาหารเม็ดที่แนะนำ:</b> <span id="dryVal">68</span> กรัม/วัน หรือ อาหารเปียก 3 ซอง
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: LINE Simulator -->
+    <div class="panel">
+      <div class="feature-card">
+        <h3 style="color:#1E293B;margin-bottom:4px">💬 LINE Group Family Care Sync</h3>
+        <p style="color:#64748B;font-size:0.9rem;margin-bottom:1.5rem">ระบบซิงค์เวรดูแลแมวเข้า LINE Group ครอบครัว ป้องกันการให้อาหารหรือป้อนยาซ้ำซ้อน</p>
+
+        <div class="phone-container">
+          <div class="phone-body">
+            <div style="background:white;border-radius:12px;padding:8px 12px;align-self:flex-start;max-width:85%;box-shadow:0 2px 6px rgba(0,0,0,0.1)">
+              <div style="font-size:0.7rem;font-weight:700;color:#475569">👩‍🦰 คุณแม่</div>
+              วันนี้อย่าลืมป้อนยาน้องส้มซ่าหลังอาหารเช้านะจ๊ะ
+              <div style="font-size:0.65rem;color:#94A3B8;text-align:right">08:15</div>
+            </div>
+
+            <!-- LINE Flex Message -->
+            <div style="background:white;border-radius:14px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,0.15)">
+              <div style="background:#FF9F43;padding:8px 12px;color:white;font-weight:800;font-size:0.78rem">
+                🤖 CatCare Bot · แจ้งเตือนอัตโนมัติ
+              </div>
+              <div style="padding:10px">
+                <div style="font-weight:800;color:#1E293B;font-size:0.9rem">💊 ถึงเวลาป้อนยาฆ่าเชื้อ</div>
+                <div style="font-size:0.75rem;color:#64748B">น้องส้มซ่า · หลังอาหารเช้า</div>
+                <button id="simBtn" onclick="simCheckin()" style="width:100%;background:#06C755;color:white;border:none;border-radius:8px;padding:8px;font-weight:700;font-size:0.8rem;margin-top:8px;cursor:pointer">
+                  ✅ บันทึกว่าป้อนยาแล้ว
+                </button>
+              </div>
+            </div>
+
+            <div id="simReply" style="display:none;background:#DCFCE7;border-radius:12px;padding:8px 12px;align-self:flex-end;max-width:85%;box-shadow:0 2px 6px rgba(0,0,0,0.1)">
+              <div style="font-size:0.7rem;font-weight:700;color:#166534">👨‍🦱 คุณพ่อ</div>
+              พ่อป้อนยาเรียบร้อยแล้วจ้า น้องกินง่ายมาก! 👍
+              <div style="font-size:0.65rem;color:#94A3B8;text-align:right">08:25</div>
+            </div>
+
+            <div id="simLog" style="display:none;background:white;border-radius:10px;padding:6px 10px;font-size:0.72rem;color:#64748B;text-align:center">
+              ✨ <b>คุณพ่อ</b> อัปเดตเข้าระบบ CatCare เรียบร้อย เวลา 08:25 น.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Monthly Chart -->
+    <div class="panel">
+      <div class="feature-card">
+        <h3 style="color:#1E293B;margin-bottom:4px">📈 กราฟแนวโน้มน้ำหนักและดัชนีสุขภาพรายเดือน</h3>
+        <p style="color:#64748B;font-size:0.9rem;margin-bottom:1.5rem">สถิติน้ำหนักเฉลี่ย 6 เดือนย้อนหลัง พร้อมช่วง Min-Max และอัตราการเปลี่ยนแปลง MoM Delta %</p>
+        <div style="height:320px"><canvas id="demoMonthlyChart"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Architecture Modules -->
+  <section style="max-width:1100px;margin:0 auto 4rem;padding:0 1.5rem">
+    <div style="text-align:center;margin-bottom:2rem">
+      <h2 style="font-size:1.8rem;color:#1E293B">🛠️ สถาปัตยกรรมและโมดูลสำคัญของระบบ</h2>
+      <p style="color:#64748B">ออกแบบตามหลัก Clean Architecture, Dual-Engine DB, และ Production-Ready Standard</p>
+    </div>
+
+    <div class="grid3">
+      <div class="info-card">
+        <div style="font-size:2rem">⚡</div>
+        <h4>Dual-Engine Database</h4>
+        <p>รองรับทั้ง SQLite สำหรับการรันแบบ Standalone ไร้กังวล และ PostgreSQL Production บน Docker พร้อม Alembic Migration</p>
+      </div>
+      <div class="info-card">
+        <div style="font-size:2rem">📄</div>
+        <h4>Veterinary Clinical Export</h4>
+        <p>ส่งออกเวชระเบียนสัตว์เลี้ยงแบบ PDF (ReportLab พร้อมฟอนต์ไทย) และ CSV (UTF-8 BOM) สำหรับเปิดใน Excel ไม่เป็นภาษาต่างดาว</p>
+      </div>
+      <div class="info-card">
+        <div style="font-size:2rem">📱</div>
+        <h4>Mobile-First &amp; PWA</h4>
+        <p>ติดตั้งเป็นแอปพลิเคชันบนมือถือผ่าน Progressive Web App (PWA) พร้อม Bottom Bar ออกแบบตาม Thumb-Zone Navigation</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 CatCare Platform · Developed by <b>Natcha</b> · <a href="https://github.com/natchlimar-droid/CatCare" style="color:var(--primary);text-decoration:none">GitHub Repository</a></p>
+</footer>
+
+<script>
+  function switchTab(idx) {
+    const btns = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.panel');
+    btns.forEach((b, i) => b.classList.toggle('active', i === idx));
+    panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+    if (idx === 3) renderMonthlyChart();
+  }
+
+  function calcBCS(w) {
+    w = parseFloat(w);
+    document.getElementById('wVal').textContent = w.toFixed(1);
+    const breed = document.getElementById('breedSel').value;
+    let min = 3.5, max = 5.5;
+    if (breed.includes('British')) { min = 4.0; max = 7.0; }
+    if (breed.includes('Korat')) { min = 3.0; max = 4.5; }
+    if (breed.includes('Domestic')) { min = 3.2; max = 5.0; }
+
+    const mid = (min + max) / 2;
+    const diffPct = ((w - mid) / mid) * 100;
+    let bcs = 5, status = 'สมส่วนสุขภาพดี (Ideal Weight)', color = '#10B981';
+
+    if (diffPct <= -25) { bcs = 2; status = 'ผอมมาก (Very Thin)'; color = '#3B82F6'; }
+    else if (diffPct <= -10) { bcs = 4; status = 'ค่อนข้างผอม (Mildly Thin)'; color = '#60A5FA'; }
+    else if (diffPct >= 25) { bcs = 8; status = 'อ้วนมาก (Obese)'; color = '#EF4444'; }
+    else if (diffPct >= 10) { bcs = 6; status = 'ท้วมเกินเกณฑ์ (Overweight)'; color = '#F59E0B'; }
+
+    document.getElementById('bcsScore').textContent = `BCS ${bcs} / 9`;
+    const badge = document.getElementById('bcsBadge');
+    badge.textContent = status;
+    badge.style.background = color;
+
+    const rer = Math.round(70 * Math.pow(w, 0.75));
+    const factor = bcs >= 7 ? 1.0 : (bcs <= 3 ? 1.4 : 1.2);
+    const der = Math.round(rer * factor);
+    document.getElementById('rerVal').textContent = rer;
+    document.getElementById('derVal').textContent = der;
+    document.getElementById('dryVal').textContent = Math.round(der / 3.8);
+  }
+
+  function simCheckin() {
+    const btn = document.getElementById('simBtn');
+    btn.textContent = '✅ ป้อนยาแล้วเรียบร้อย!';
+    btn.style.background = '#64748B';
+    btn.disabled = true;
+    document.getElementById('simReply').style.display = 'block';
+    document.getElementById('simLog').style.display = 'block';
+  }
+
+  function renderMonthlyChart() {
+    const ctx = document.getElementById('demoMonthlyChart');
+    if (!ctx || window._mChart) return;
+    window._mChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['มิ.ย. 69', 'ก.ค. 69', 'ส.ค. 69', 'ก.ย. 69', 'ต.ค. 69', 'พ.ย. 69'],
+        datasets: [{
+          label: 'น้ำหนักเฉลี่ย (kg)',
+          data: [4.20, 4.25, 4.35, 4.40, 4.45, 4.50],
+          backgroundColor: '#FF9F43',
+          borderRadius: 8,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { min: 3.5, max: 5.0, ticks: { callback: v => v + ' kg' } }
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>
+
