@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>กลุ่มครอบครัว & LINE Sync 👨‍👩‍👧‍👦 | Cat Care</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FF9F43">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Prompt:wght@500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF9F43;
+      --primary-dark: #EE801A;
+      --secondary: #FF6B9D;
+      --accent: #10B981;
+      --line-green: #06C755;
+      --dark: #1E293B;
+      --gray: #64748B;
+      --radius: 20px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: linear-gradient(180deg, #FFFDF9 0%, #FFF8F0 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      padding-bottom: 84px;
+    }
+    h1, h2, h3, h4, .brand-font { font-family: 'Prompt', 'Plus Jakarta Sans', sans-serif; }
+
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 159, 67, 0.15);
+      padding: 0.85rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-brand span { color: var(--primary); }
+
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.2rem 1rem;
+    }
+
+    /* Family Hero Card */
+    .family-hero {
+      background: linear-gradient(135deg, #FF9F43 0%, #FF6B9D 100%);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      color: white;
+      box-shadow: 0 10px 25px -5px rgba(255, 107, 157, 0.35);
+      margin-bottom: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .family-hero::after {
+      content: "👨‍👩‍👧‍👦";
+      position: absolute;
+      right: -10px;
+      bottom: -15px;
+      font-size: 5rem;
+      opacity: 0.18;
+    }
+    .group-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    .group-title { font-size: 1.4rem; font-weight: 800; }
+    .group-sub { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; }
+
+    /* Invite Code Box */
+    .invite-box {
+      background: white;
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      color: var(--dark);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .invite-code {
+      font-family: monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: 1px;
+    }
+    .btn-copy {
+      background: #FFF4E5;
+      color: var(--primary-dark);
+      border: 1px solid #FFCD80;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Section Cards */
+    .sec-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1.3rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      border: 1px solid rgba(255, 159, 67, 0.12);
+      margin-bottom: 1.2rem;
+    }
+    .sec-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0.9rem;
+    }
+
+    /* Care Shift Schedule */
+    .shift-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #F8FAFC;
+    }
+    .shift-row:last-child { border-bottom: none; }
+    .shift-left { display: flex; align-items: center; gap: 10px; }
+    .shift-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .shift-title { font-weight: 700; font-size: 0.9rem; color: var(--dark); }
+    .shift-assignee { font-size: 0.78rem; color: var(--gray); margin-top: 1px; }
+    .shift-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 50px;
+    }
+    .sb-done { background: #DCFCE7; color: #166534; }
+    .sb-pending { background: #FEF3C7; color: #92400E; }
+
+    /* LINE Flex Simulator Box */
+    .line-chat-box {
+      background: #7AC5CD;
+      border-radius: 18px;
+      padding: 12px;
+      border: 4px solid #2C3E50;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      margin-top: 0.5rem;
+    }
+    .line-chat-header {
+      text-align: center;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .line-card {
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .line-card-hero {
+      background: #FF9F43;
+      padding: 8px 12px;
+      color: white;
+      font-weight: 800;
+      font-size: 0.78rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .line-card-body { padding: 12px; }
+    .btn-line-action {
+      width: 100%;
+      background: var(--line-green);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 9px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
+    }
+    .btn-line-action:hover { filter: brightness(1.05); }
+
+    /* Member List */
+    .member-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin-top: 0.5rem;
+    }
+    .member-card {
+      background: #FFFDF9;
+      border: 1.5px solid rgba(255, 159, 67, 0.2);
+      border-radius: 14px;
+      padding: 0.85rem 0.5rem;
+      text-align: center;
+    }
+    .member-avatar { font-size: 2rem; margin-bottom: 4px; }
+    .member-name { font-weight: 700; font-size: 0.85rem; color: var(--dark); }
+    .member-role { font-size: 0.72rem; color: var(--primary-dark); font-weight: 600; }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255, 159, 67, 0.18);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+      z-index: 1000;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+    }
+    .b-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #777;
+      text-decoration: none;
+      gap: 2px;
+      transition: 0.2s;
+    }
+    .b-nav-item.active {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .b-nav-item .b-icon { font-size: 1.3rem; }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-30px);
+      background: #1E293B;
+      color: white;
+      padding: 0.7rem 1.4rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 2000;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">CatCare <span>Family & LINE</span> 👨‍👩‍👧‍👦</div>
+  <span style="font-size:0.75rem;padding:3px 8px;border-radius:12px;background:#DCFCE7;color:#166534;font-weight:700">🟢 LINE Bot ซิงค์อยู่</span>
+</nav>
+
+<main>
+  <!-- FAMILY HERO -->
+  <div class="family-hero">
+    <div class="group-badge">🏡 Cat Care Family Group</div>
+    <div class="group-title">บ้านเหมียวอบอุ่น 🐾</div>
+    <div class="group-sub">สมาชิก 3 คน · ดูแลน้องแมว 3 ตัวร่วมกัน</div>
+
+    <div class="invite-box">
+      <div>
+        <div style="font-size:0.7rem;color:#94A3B8;font-weight:700;text-transform:uppercase">รหัสเชิญเข้ากลุ่ม</div>
+        <div class="invite-code">CAT-HOME-8899</div>
+      </div>
+      <button class="btn-copy" onclick="copyInvite()">📋 คัดลอกรหัส</button>
+    </div>
+  </div>
+
+  <!-- TODAY'S CARE SHIFT -->
+  <div class="sec-card">
+    <div class="sec-title">📅 ตารางเวรดูแลวันนี้</div>
+
+    <div class="shift-row">
+      <div class="shift-left">
+        <div class="shift-icon" style="background:#FFF4E5;color:#FF9F43">🌅</div>
+        <div>
+          <div class="shift-title">อาหารมื้อเช้า (อาหารเปียก)</div>
+          <div class="shift-assignee">เวรของ: <b>คุณแม่</b> · เวลา 07:30 น.</div>
+        </div>
+      </div>
+      <span class="shift-badge sb-done">✅ ให้อาหารแล้ว</span>
+    </div>
+
+    <div class="shift-row">
+      <div class="shift-left">
+        <div class="shift-icon" style="background:#EFF6FF;color:#2563EB">💊</div>
+        <div>
+          <div class="shift-title">ป้อนยาปฏิชีวนะหลังอาหาร</div>
+          <div class="shift-assignee">เวรของ: <b>คุณพ่อ</b> · เวลา 12:00 น.</div>
+        </div>
+      </div>
+      <span class="shift-badge sb-pending" id="medBadge">⏰ รอป้อนยา</span>
+    </div>
+
+    <div class="shift-row">
+      <div class="shift-left">
+        <div class="shift-icon" style="background:#F3E8FF;color:#9333EA">🪣</div>
+        <div>
+          <div class="shift-title">ตักทรายแมว &amp; เช็ดกระบะ</div>
+          <div class="shift-assignee">เวรของ: <b>พี่สาว</b> · ช่วง 18:00 น.</div>
+        </div>
+      </div>
+      <span class="shift-badge sb-pending">📌 เวรช่วงเย็น</span>
+    </div>
+  </div>
+
+  <!-- LINE FLEX MESSAGE SIMULATOR -->
+  <div class="sec-card">
+    <div class="sec-title">💬 ตัวอย่างการแจ้งเตือนใน LINE Group ครอบครัว</div>
+    <p style="font-size:0.82rem;color:var(--gray);margin-bottom:0.75rem">
+      จำลองการ์ด Rich UI ที่ CatCare Bot ส่งเข้ากลุ่ม LINE เมื่อถึงเวลาดูแล
+    </p>
+
+    <div class="line-chat-box">
+      <div class="line-chat-header">🟢 LINE Family Chat · CatCare Assistant</div>
+      <div class="line-card">
+        <div class="line-card-hero">
+          <span>🤖 CatCare Reminder Bot</span>
+          <span style="font-size:0.7rem;background:rgba(255,255,255,0.25);padding:2px 6px;border-radius:6px">ด่วนวันนี้</span>
+        </div>
+        <div class="line-card-body">
+          <div style="font-size:0.8rem;color:var(--primary);font-weight:700">🐱 เวรดูแลน้องส้มซ่า</div>
+          <div style="font-size:1.05rem;font-weight:800;color:var(--dark);margin:2px 0 6px">💊 ถึงเวลาป้อนยาฆ่าเชื้อ (รอบเที่ยง)</div>
+          <div style="font-size:0.82rem;color:#555;background:#FFF9F0;padding:8px 10px;border-radius:8px">
+            👨‍💼 <b>ผู้รับผิดชอบ:</b> คุณพ่อ<br>
+            ⏰ <b>เวลา:</b> 12:00 น. (หลังอาหาร 1 เม็ด)
+          </div>
+          <button class="btn-line-action" id="lineCheckinBtn" onclick="simLineCheckin()">
+            ✅ กดเพื่อบันทึกว่า "ป้อนยาเรียบร้อยแล้ว"
+          </button>
+        </div>
+      </div>
+
+      <div id="lineReplyBox" style="display:none;background:#DCFCE7;border-radius:10px;padding:8px 12px;margin-top:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1)">
+        <div style="font-size:0.75rem;font-weight:800;color:#166534">👨‍💼 คุณพ่อ (ผ่าน LINE):</div>
+        <div style="font-size:0.82rem;color:#166534">"ป้อนยาน้องส้มซ่าเรียบร้อยแล้วครับ น้องทานง่ายมาก 👍"</div>
+        <div style="font-size:0.68rem;color:#047857;text-align:right;margin-top:2px">บันทึกเข้าระบบ CatCare แล้ว · 12:05 น.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAMILY MEMBERS -->
+  <div class="sec-card">
+    <div class="sec-title">👥 สมาชิกในครอบครัว</div>
+    <div class="member-grid">
+      <div class="member-card">
+        <div class="member-avatar">👩‍🦰</div>
+        <div class="member-name">คุณแม่</div>
+        <div class="member-role">ผู้ดูแลหลัก (Admin)</div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar">👨‍💼</div>
+        <div class="member-name">คุณพ่อ</div>
+        <div class="member-role">ฝ่ายสุขภาพ &amp; ยา</div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar">👧</div>
+        <div class="member-name">พี่สาว</div>
+        <div class="member-role">ฝ่ายกิจกรรม &amp; ทราย</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="bottom-nav">
+  <a href="dashboard.html" class="b-nav-item">
+    <span class="b-icon">📊</span>
+    <span>สรุปผล</span>
+  </a>
+  <a href="data_entry.html" class="b-nav-item">
+    <span class="b-icon">📝</span>
+    <span>บันทึกด่วน</span>
+  </a>
+  <a href="family.html" class="b-nav-item active">
+    <span class="b-icon">👨‍👩‍👧‍👦</span>
+    <span>ครอบครัว</span>
+  </a>
+  <a href="passport.html" class="b-nav-item">
+    <span class="b-icon">🪪</span>
+    <span>พาสปอร์ต</span>
+  </a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function copyInvite() {
+  navigator.clipboard.writeText('CAT-HOME-8899').then(() => {
+    showToast('📋 คัดลอกรหัสเชิญครอบครัวเรียบร้อย!');
+  }).catch(() => {
+    showToast('📋 รหัสเชิญ: CAT-HOME-8899');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function simLineCheckin() {
+  const btn = document.getElementById('lineCheckinBtn');
+  btn.disabled = true;
+  btn.innerHTML = '✨ บันทึกแล้ว!';
+  btn.style.background = '#64748B';
+
+  document.getElementById('medBadge').className = 'shift-badge sb-done';
+  document.getElementById('medBadge').textContent = '✅ ป้อนยาแล้ว (12:05)';
+
+  document.getElementById('lineReplyBox').style.display = 'block';
+  showToast('🎉 คุณพ่ออัปเดตสถานะสำเร็จ! สมาชิกในบ้านได้รับแจ้งเตือนใน LINE แล้ว');
+}
+</script>
+</body>
+</html>
+
