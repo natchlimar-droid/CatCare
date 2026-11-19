@@ -1,5 +1,7 @@
 # 🐱 CatCare — Pet Health, Activity & Expense Management System
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/natchlimar-droid/CatCare)
+[![CI Pipeline](https://github.com/natchlimar-droid/CatCare/actions/workflows/ci.yml/badge.svg)](https://github.com/natchlimar-droid/CatCare/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111%2B-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.35%2B-FF4B4B.svg)](https://streamlit.io/)
@@ -20,6 +22,9 @@
 - 🥣 **Smart Mixed Feeding Portion Matcher**: คำนวณสัดส่วนอาหารเม็ดผสมอาหารเปียกให้ได้แคลอรีตรงเป้าหมายพอดี 100%
 - 🪣 **Smart Litter & Renal Health AI**: วิเคราะห์ก้อนปัสสาวะและความถี่ คัดกรองความเสี่ยงโรคนิ่วและโรคไตล่วงหน้า
 - 👨‍👩‍👧‍👦 **Family Care Group & LINE Group Sync**: ระบบบ้านร่วมดูแลแมวสำหรับครอบครัว พร้อมรหัสเชิญ **Family Invite Code (`CAT-FAM-7734`)** และ **Dynamic QR Code** ให้คนในบ้านสแกนเข้าร่วมทันที เชื่อมต่อบอทเข้ากลุ่ม LINE เพื่อ Broadcast การให้อาหารและป้อนยาแบบ Real-Time ป้องกันการให้ซ้ำซ้อน
+- 🔔 **Proactive Vaccine & Vet Scheduler Engine**: แจ้งเตือนอัตโนมัติเมื่อใกล้ถึงกำหนดฉีดวัคซีนหรือพบสัตวแพทย์ล่วงหน้า 7 วัน, 3 วัน, 1 วัน พร้อมปุ่มนำเข้านัดหมายลงปฏิทินมือถือ (Apple / Google Calendar `.ics`)
+- 📈 **Monthly Weight & Health Trend Analytics**: กราฟวิเคราะห์แนวโน้มน้ำหนักและสุขภาพรายเดือน (MoM Delta %, Min-Max Range, และดัชนีความเสถียรสุขภาพสากล)
+- 📄 **Veterinary Clinical Export (PDF & CSV)**: ส่งออกเวชระเบียนสัตว์เลี้ยงอย่างเป็นทางการ (Official Medical Record PDF) พร้อมเลขไมโครชิป ตารางวัคซีน ช่องลงนามสัตวแพทย์ และไฟล์ข้อมูลดิบ CSV (UTF-8 BOM) เปิดใน Microsoft Excel ภาษาไทยไม่เพี้ยน
 - 💬 **LINE Messaging API Rich Flex**: ส่งการ์ดแจ้งเตือนแบบ Interactive Rich UI พร้อมปุ่ม Action (กดบันทึกว่าฉีดแล้ว / ป้อนยาแล้ว จากแชต LINE ได้ทันที)
 - 🚨 **Toxic Plants & Food Radar**: สารานุกรมค้นหาพืชมีพิษและอาหารอันตราย พร้อมเบอร์โทรฉุกเฉินโรงพยาบาลสัตว์ 24 ชม.
 - 💸 **Expense Tracker**: วิเคราะห์ค่าใช้จ่ายแยกหมวดหมู่ (ค่ารักษา, อาหาร, ทรายแมว, ยา, ของเล่น) พร้อมสรุปยอดรวม
@@ -132,6 +137,30 @@ erDiagram
         string status "pending | notified | done"
     }
 ```
+
+---
+
+## ⚡ การรันโปรเจกต์บน GitHub โดยตรง (Run Directly on GitHub)
+
+คุณสามารถเปิดใช้งานและทดสอบระบบ CatCare บน GitHub ได้โดยตรงโดยไม่ต้องติดตั้งโปรแกรมใดๆ บนเครื่องคอมพิวเตอร์ของคุณ:
+
+### วิธีที่ 1: รันผ่าน GitHub Codespaces (1-Click Run in Browser) 🚀
+1. คลิกที่ปุ่ม **[Open in GitHub Codespaces](https://codespaces.new/natchlimar-droid/CatCare)** หรือกดปุ่มเขียว **Code** -> แท็บ **Codespaces** -> **Create codespace on main** บนหน้า GitHub Repository
+2. GitHub จะสร้าง Cloud Container พร้อมติดตั้ง Dependencies และสร้างฐานข้อมูลตัวอย่าง SQLite ให้อัตโนมัติใน 1 นาที
+3. ระบบจะ Forward Port **8501 (Streamlit Dashboard)** และ **8080 (FastAPI Docs)** พร้อมเปิดหน้าจอใช้งานบนเว็บเบราว์เซอร์ของคุณทันที!
+
+### วิธีที่ 2: รันและทดสอบผ่าน GitHub Actions CI/CD Pipeline ⚙️
+* ทุกครั้งที่มีการ `git push` หรือส่ง `pull_request` ขึ้น GitHub ระบบ **GitHub Actions** จะทำการ:
+  * รันบน Ubuntu Container ด้วย Python 3.11 และ 3.12
+  * ติดตั้ง Dependencies และจำลองฐานข้อมูล SQLite
+  * รันชุดทดสอบอัตโนมัติ **Pytest Suite (`tests/test_core.py`)** ครบ 7 การทดสอบ
+  * ตรวจสอบ Health Check ของ FastAPI และความถูกต้องของโค้ดอัตโนมัติ พร้อมแสดง Badge สถานะ Build สีเขียว ✅
+
+### วิธีที่ 3: Deploy ขึ้น Streamlit Community Cloud (โฮสต์เว็บแอปฟรี 24 ชั่วโมง) 🌐
+1. ไปที่ [share.streamlit.io](https://share.streamlit.io/) แล้วล็อกอินด้วยบัญชี GitHub
+2. กดปุ่ม **New app**
+3. เลือก Repository: `natchlimar-droid/CatCare`, Branch: `main`, Main file path: `dashboard/dashboard.py`
+4. กด **Deploy!** — ระบบจะดึงโค้ดและรันให้ทุกคนเข้าชมผลงาน Portfolio ของคุณผ่านลิงก์สาธารณะได้ตลอด 24 ชั่วโมง!
 
 ---
 

@@ -1,0 +1,38 @@
+{
+  "name": "CatCare DevContainer",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": "true",
+      "username": "vscode"
+    }
+  },
+  "forwardPorts": [
+    8501,
+    8080
+  ],
+  "portsAttributes": {
+    "8501": {
+      "label": "CatCare Streamlit Dashboard",
+      "onAutoForward": "openBrowser"
+    },
+    "8080": {
+      "label": "CatCare FastAPI Backend & Docs",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "postCreateCommand": "pip install --upgrade pip && pip install -r requirements.txt && python seed_data.py",
+  "postStartCommand": "nohup uvicorn app.main:app --host 0.0.0.0 --port 8080 > fastapi.log 2>&1 & nohup streamlit run dashboard/dashboard.py --server.port 8501 --server.headless true > streamlit.log 2>&1 &"
+}

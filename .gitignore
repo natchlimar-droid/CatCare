@@ -30,6 +30,7 @@ __pycache__/
 *.bak
 *.sqlite
 *.sqlite3
+*.db
 
 # Ignore general .sql files, but keep schema/setup files
 *.sql

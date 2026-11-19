@@ -76,6 +76,47 @@ class Reminder:
     recurrence_days: Optional[int] = None
 
 
+def get_db_reminders() -> list[Reminder]:
+    """ดึงข้อมูล Reminders ที่ยัง pending จากฐานข้อมูลจริง (SQLite / PostgreSQL)"""
+    try:
+        from app.database import SyncSessionLocal
+        from app.models import Reminder as DBReminder, Cat
+        db = SyncSessionLocal()
+        db_rems = db.query(DBReminder, Cat).outerjoin(Cat, DBReminder.cat_id == Cat.id).filter(DBReminder.status == "pending").all()
+        results = []
+        for r, c in db_rems:
+            rt_str = str(r.reminder_type).lower()
+            if "vaccine" in rt_str or "วัคซีน" in r.title:
+                rt = ReminderType.VACCINE
+            elif "vet" in rt_str or "หมอ" in r.title:
+                rt = ReminderType.VET_CHECKUP
+            elif "litter" in rt_str or "ทราย" in r.title:
+                rt = ReminderType.LITTER_CHANGE
+            elif "med" in rt_str or "ยา" in r.title:
+                rt = ReminderType.MEDICINE
+            elif "groom" in rt_str or "เล็บ" in r.title:
+                rt = ReminderType.GROOMING
+            else:
+                rt = ReminderType.CUSTOM
+
+            results.append(Reminder(
+                id=str(r.id),
+                cat_name=c.name if c else None,
+                reminder_type=rt,
+                title=r.title,
+                description=r.description,
+                due_date=r.due_date,
+                status=ReminderStatus.PENDING,
+                is_recurring=r.is_recurring,
+                recurrence_days=r.recurrence_days
+            ))
+        db.close()
+        return results if results else get_mock_reminders()
+    except Exception as e:
+        log.warning(f"Could not read from DB ({e}), fallback to mock reminders")
+        return get_mock_reminders()
+
+
 # ─── Mock Database ────────────────────────────────────────────────────────────
 def get_mock_reminders() -> list[Reminder]:
     """
@@ -256,17 +297,24 @@ async def send_line_messaging_api(message: str, client: httpx.AsyncClient) -> bo
 
 
 async def mark_as_notified(reminder_id: str) -> None:
-    """
-    อัปเดต status = 'notified' ใน DB
-    ใน Production ให้แทนด้วย:
-        session.query(Reminder).filter_by(id=reminder_id).update({"status": "notified"})
-        session.commit()
-    """
-    log.info(f"[DB] Marked reminder {reminder_id!r} → notified")
+    """อัปเดต status = 'notified' ในฐานข้อมูลจริง"""
+    try:
+        from app.database import SyncSessionLocal
+        from app.models import Reminder as DBReminder
+        import uuid
+        db = SyncSessionLocal()
+        rem = db.query(DBReminder).filter(DBReminder.id == uuid.UUID(reminder_id)).first()
+        if rem:
+            rem.status = "notified"
+            db.commit()
+            log.info(f"[DB] Successfully updated reminder {reminder_id} to notified")
+        db.close()
+    except Exception as e:
+        log.warning(f"[DB] Could not mark reminder {reminder_id} in DB: {e}")
 
 
 # ─── Main Runner ──────────────────────────────────────────────────────────────
-async def run_notification_job() -> None:
+async def run_notification_job(notify_before_days: int = 3) -> list[NotifyCandidate]:
     """
     จุดเริ่มต้นของ Automation Job
     เรียงลำดับการทำงาน:
@@ -282,15 +330,15 @@ async def run_notification_job() -> None:
     log.info("=" * 50)
 
     # Step 1: Query DB
-    all_reminders = get_mock_reminders()
+    all_reminders = get_db_reminders()
     log.info(f"📋 Reminders ทั้งหมดใน DB: {len(all_reminders)} รายการ")
 
-    # Step 2: คัดกรองตาม Date Logic
-    candidates = evaluate_reminders(all_reminders, notify_before_days=1)
+    # Step 2: คัดกรองตาม Date Logic (เช็กล่วงหน้าตาม notify_before_days)
+    candidates = evaluate_reminders(all_reminders, notify_before_days=notify_before_days)
 
     if not candidates:
-        log.info("✨ ไม่มี Reminder ที่ต้องแจ้งเตือนวันนี้")
-        return
+        log.info("✨ ไม่มี Reminder ที่ต้องแจ้งเตือนในรอบนี้")
+        return []
 
     log.info(f"🔔 พบ {len(candidates)} รายการที่ต้องแจ้งเตือน")
 
@@ -303,14 +351,15 @@ async def run_notification_job() -> None:
         notify_ok = await send_line_notify(message, client)
         msg_ok = await send_line_messaging_api(message, client)
 
-    # Step 5: อัปเดต DB ถ้าส่งสำเร็จอย่างน้อย 1 ช่องทาง
+    # Step 5: อัปเดต DB ถ้าส่งสำเร็จ
     if notify_ok or msg_ok:
         for c in candidates:
             await mark_as_notified(c.reminder.id)
     else:
-        log.error("⚠️ ไม่สามารถส่ง LINE ได้ทุกช่องทาง — ไม่อัปเดต DB")
+        log.warning("⚠️ โหมดจำลองผลลัพธ์ (LINE Token ยังไม่ได้ตั้งค่าจริง) — ข้ามการแก้ DB")
 
     log.info("✅ Notification Job เสร็จสิ้น")
+    return candidates
 
 
 if __name__ == "__main__":

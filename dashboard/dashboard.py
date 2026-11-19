@@ -19,8 +19,11 @@ for _p in (_dash_dir, _project_dir):
 from db_queries import (
     is_db_available, get_all_cats, get_expense_summary_by_month,
     get_expense_kpi, get_weight_food_trend, get_latest_weight,
+    get_monthly_weight_health_stats, get_upcoming_reminders,
+    get_cat_full_medical_data,
 )
 from app.feline_health import estimate_feline_bcs, calculate_energy_needs, get_breed_info
+from app.clinical_export import generate_clinical_csv, generate_clinical_pdf
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(page_title="📊 Analytics | Cat Care", page_icon="📊",
@@ -80,8 +83,15 @@ def mock_weight_food(cat_name: str):
     return pd.DataFrame(records)
 
 
-# ─── DB Status ────────────────────────────────────────────────────────────────
+# ─── DB Status & Auto-Seed on Cloud ───────────────────────────────────────────
 DB_LIVE = is_db_available()
+if not DB_LIVE:
+    try:
+        from seed_data import seed
+        seed()
+        DB_LIVE = is_db_available()
+    except Exception as e:
+        print(f"[INIT] Auto-seed note: {e}")
 
 # ─── Sidebar ──────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -134,6 +144,27 @@ k1.metric("💰 รวมเดือนนี้",  f"฿{kpi.get('total', 0):,
 k2.metric("🍽️ ค่าอาหาร",   f"฿{kpi.get('food', 0):,.0f}")
 k3.metric("🏥 ค่าหมอ",     f"฿{kpi.get('vet', 0):,.0f}")
 k4.metric("⚖️ น้ำหนักล่าสุด", f"{latest_w:.2f} kg" if latest_w else "—")
+
+# ─── Proactive Vaccine & Vet Alert Banner ────────────────────────────────────
+if DB_LIVE:
+    urgent_reminders = get_upcoming_reminders(7)
+    urgent_medical = urgent_reminders[urgent_reminders["reminder_type"].isin(["vaccine", "vet", "medicine"])] if not urgent_reminders.empty else pd.DataFrame()
+    if not urgent_medical.empty:
+        r_first = urgent_medical.iloc[0]
+        days_left = r_first["days_remaining"]
+        badge_txt = "🚨 วันนี้!" if days_left == 0 else (f"⚠️ ในอีก {days_left} วัน" if days_left > 0 else f"🔴 เลยกำหนด {abs(days_left)} วัน")
+        st.markdown(f"""<div style="background:#FFF0F4;border:2px solid #FF6B9D;border-radius:14px;padding:12px 18px;margin:12px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+<div style="display:flex;align-items:center;gap:12px">
+<span style="font-size:1.8rem">💉</span>
+<div>
+<div style="font-weight:800;color:#991B1B;font-size:1rem">แจ้งเตือนนัดหมายสำคัญ: {r_first['title']} ({r_first['cat_name']})</div>
+<div style="font-size:0.85rem;color:#64748B">กำหนดนัด: {r_first['due_date'].strftime('%d/%m/%Y')} · {r_first['description'] or 'กรุณาเตรียมตัวล่วงหน้า'}</div>
+</div>
+</div>
+<div>
+<span style="background:#FF6B9D;color:white;font-weight:700;padding:4px 14px;border-radius:20px;font-size:0.82rem">{badge_txt}</span>
+</div>
+</div>""", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -347,3 +378,111 @@ if not wf_df.empty:
         paper_bgcolor="rgba(0,0,0,0)"
     )
     st.plotly_chart(fig_corridor, use_container_width=True)
+
+# ─── Monthly Weight & Health Trend Analytics ──────────────────────────────────
+st.markdown("---")
+st.subheader("📊 กราฟและสถิติวิเคราะห์สุขภาพรายเดือน (Monthly Health & Weight Progression)")
+st.caption("ติดตามการเปลี่ยนแปลงน้ำหนักและสภาวะสุขภาพแบบ Month-over-Month (MoM) พร้อมช่วงความผันผวน Min-Max")
+
+cat_id_for_stats = cat_row["id"].iloc[0] if not cat_row.empty else None
+monthly_df = get_monthly_weight_health_stats(cat_id_for_stats, months=6) if DB_LIVE else pd.DataFrame()
+
+if not monthly_df.empty:
+    m_col1, m_col2 = st.columns([1.6, 1])
+
+    with m_col1:
+        # Chart: Bar + Range (Min-Max) + Trend Line
+        fig_monthly = go.Figure()
+
+        # Bar chart: Average Weight
+        fig_monthly.add_trace(go.Bar(
+            name="น้ำหนักเฉลี่ย (kg)",
+            x=monthly_df["label"],
+            y=monthly_df["avg_weight"],
+            marker_color="#4A90D9",
+            text=monthly_df["avg_weight"].apply(lambda v: f"{v:.2f} kg"),
+            textposition="auto",
+            opacity=0.85,
+        ))
+
+        # Line: Min to Max Range Error bars
+        fig_monthly.add_trace(go.Scatter(
+            name="ช่วงน้ำหนักต่ำสุด - สูงสุด (Range)",
+            x=monthly_df["label"],
+            y=monthly_df["avg_weight"],
+            mode="markers",
+            error_y=dict(
+                type="data",
+                symmetric=False,
+                array=monthly_df["max_weight"] - monthly_df["avg_weight"],
+                arrayminus=monthly_df["avg_weight"] - monthly_df["min_weight"],
+                color="#FF9F43",
+                thickness=2.5,
+                width=6
+            ),
+            marker=dict(color="#FF9F43", size=8)
+        ))
+
+        fig_monthly.update_layout(
+            template="plotly_white",
+            height=340,
+            xaxis=dict(title="เดือน", showgrid=False),
+            yaxis=dict(title="น้ำหนักตัว (kg)", range=[max(1.0, monthly_df["min_weight"].min() - 0.5), monthly_df["max_weight"].max() + 0.6]),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02),
+            margin=dict(t=10, b=40),
+            plot_bgcolor="#FFFAF4",
+            paper_bgcolor="rgba(0,0,0,0)"
+        )
+        st.plotly_chart(fig_monthly, use_container_width=True)
+
+    with m_col2:
+        # Month-over-Month Health Cards & Metric highlights
+        latest_m = monthly_df.iloc[-1]
+        prev_m = monthly_df.iloc[-2] if len(monthly_df) >= 2 else latest_m
+        mom_diff = latest_m["avg_weight"] - prev_m["avg_weight"]
+        mom_pct = (mom_diff / prev_m["avg_weight"] * 100.0) if prev_m["avg_weight"] else 0.0
+
+        st.markdown(f"""<div style="background:white;border-radius:14px;padding:1.2rem;box-shadow:0 3px 12px rgba(0,0,0,0.05);border-left:5px solid #4A90D9">
+<h4 style="margin:0 0 6px;color:#2C3E50">📈 ดัชนีความเสถียรสุขภาพ (MoM Index)</h4>
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
+<span style="font-size:1.8rem;font-weight:800;color:#2C3E50">{latest_m['avg_weight']:.2f} kg</span>
+<span style="font-weight:700;font-size:0.95rem;color:{'#2E7D32' if abs(mom_pct)<=2 else ('#E65100' if mom_pct>0 else '#C62828')}">
+{'+' if mom_diff>0 else ''}{mom_diff:.2f} kg ({'+' if mom_pct>0 else ''}{mom_pct:.1f}%)
+</span>
+</div>
+<p style="font-size:0.85rem;color:#666;margin:4px 0">สถานะล่าสุด: <b>{latest_m['status']}</b></p>
+<p style="font-size:0.85rem;color:#666;margin:4px 0">ช่วงน้ำหนักในเดือน: <b>{latest_m['min_weight']:.2f} – {latest_m['max_weight']:.2f} kg</b></p>
+<p style="font-size:0.85rem;color:#666;margin:4px 0">อาหารเฉลี่ย: <b>~{latest_m['avg_food_g']:.0f} กรัม/วัน</b></p>
+<hr style="margin:8px 0;border:none;border-top:1px dashed #eee">
+<p style="font-size:0.8rem;color:#888;margin:0">💡 เกณฑ์ทางการแพทย์: การเปลี่ยนแปลงน้ำหนักต่อเดือนไม่ควรเกิน ±3% เพื่อป้องกันภาวะไขมันพอกตับในแมว (Hepatic Lipidosis)</p>
+</div>""", unsafe_allow_html=True)
+
+# ─── Clinical Export Quick Hub ────────────────────────────────────────────────
+st.markdown("---")
+st.subheader("🏥 ส่งออกประวัติสุขภาพสำหรับคลินิก & โรงพยาบาลสัตว์ (Veterinary Clinical Export)")
+st.caption("สร้างเอกสารสรุปประวัติสุขภาพอย่างเป็นทางการแบบ PDF หรือไฟล์ CSV รองรับการเปิดใน Microsoft Excel ภาษาไทย 100%")
+
+exp_c1, exp_c2 = st.columns(2)
+med_data = get_cat_full_medical_data(cat_id_for_stats) if DB_LIVE else {"cat_info": {}, "weight_logs": [], "reminders": [], "expenses": []}
+
+with exp_c1:
+    pdf_bytes = generate_clinical_pdf(med_data["cat_info"], med_data["weight_logs"], med_data["reminders"])
+    st.download_button(
+        label="📄 ดาวน์โหลดใบสรุปประวัติสุขภาพ (Official Medical Record PDF)",
+        data=pdf_bytes,
+        file_name=f"CatCare_Medical_Record_{cur_cat_name}.pdf",
+        mime="application/pdf",
+        use_container_width=True
+    )
+    st.caption("✨ เอกสาร PDF ทางการแพทย์พร้อมเลขไมโครชิป ตารางวัคซีน แนวโน้มน้ำหนัก และช่องลงนามสัตวแพทย์")
+
+with exp_c2:
+    csv_str = generate_clinical_csv(med_data["cat_info"], med_data["weight_logs"], med_data["reminders"], med_data["expenses"])
+    st.download_button(
+        label="📊 ดาวน์โหลดประวัติทั้งหมดแบบ Excel (CSV UTF-8 BOM)",
+        data=csv_str.encode("utf-8-sig"),
+        file_name=f"CatCare_Clinical_Data_{cur_cat_name}.csv",
+        mime="text/csv",
+        use_container_width=True
+    )
+    st.caption("✨ ไฟล์ CSV มี UTF-8 BOM เปิดใน Microsoft Excel บน Windows ภาษาไทยไม่เป็นภาษาต่างดาว")

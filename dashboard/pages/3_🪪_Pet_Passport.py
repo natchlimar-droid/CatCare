@@ -25,8 +25,9 @@ for _p in (_dash_dir, _project_dir):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from db_queries import get_all_cats, is_db_available, get_latest_weight
+from db_queries import get_all_cats, is_db_available, get_latest_weight, get_cat_full_medical_data
 from app.feline_health import estimate_feline_bcs, calculate_energy_needs
+from app.clinical_export import generate_clinical_csv, generate_clinical_pdf
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -259,9 +260,10 @@ st.markdown(f"""<div class="passport-card">
 </div>""", unsafe_allow_html=True)
 
 # ─── Tabs for Additional Tools ────────────────────────────────────────────────
-tab_feed, tab_toxic = st.tabs([
+tab_feed, tab_toxic, tab_export = st.tabs([
     "🍽️ เครื่องคำนวณอาหารเม็ด + อาหารเปียก (Mixed Feeding)",
-    "🚨 ค้นหาพืชมีพิษและอาหารอันตราย (Toxic Radar)"
+    "🚨 ค้นหาพืชมีพิษและอาหารอันตราย (Toxic Radar)",
+    "📄 ส่งออกประวัติการรักษาคลินิก (PDF / CSV Clinical Export)"
 ])
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -333,4 +335,62 @@ with tab_toxic:
     st.markdown("---")
     st.markdown("📞 **เบอร์โทรฉุกเฉินโรงพยาบาลสัตว์ 24 ชั่วโมง:**")
     st.markdown("• **รพ.สัตว์ทองหล่อ (24 ชม.):** `02-079-9999` &nbsp;&nbsp;|&nbsp;&nbsp; • **รพ.สัตว์ ม.เกษตรศาสตร์ บางเขน:** `02-797-1900`")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TAB 3: Clinical & Hospital Export Suite (PDF / CSV)
+# ─────────────────────────────────────────────────────────────────────────────
+with tab_export:
+    st.subheader(f"🏥 เอกสารสรุปประวัติสุขภาพทางการแพทย์: {selected_cat_name}")
+    st.caption("ส่งออกประวัติสุขภาพที่ได้รับการรับรอง สำหรับยื่นต่อสัตวแพทย์ที่โรงพยาบาลสัตว์ หรือคลินิกประจำ")
+
+    med_export = get_cat_full_medical_data(cat_id)
+
+    col_ep1, col_ep2 = st.columns(2)
+
+    with col_ep1:
+        st.markdown(f"""<div style="background:white;border-radius:18px;padding:1.4rem;border:1.5px solid #E2E8F0;box-shadow:0 4px 16px rgba(0,0,0,0.05);height:100%">
+<div style="font-size:2.2rem;margin-bottom:8px">📄</div>
+<h4 style="margin:0 0 6px;color:#1E293B">Official Medical Record (PDF)</h4>
+<p style="font-size:0.88rem;color:#64748B;line-height:1.6;margin-bottom:14px">
+เอกสารสรุปประวัติสุขภาพทางการแพทย์ ออกแบบตามมาตรฐานเวชระเบียนสัตว์เลี้ยง ประกอบด้วย:
+<br>• ข้อมูลประจำตัวและเลขไมโครชิป ({chip_num})
+<br>• สรีระและคะแนนดัชนีมวลกายสากล (WSAVA BCS 1-9)
+<br>• ตารางบันทึกการรับวัคซีนและยาป้องกันปรสิต
+<br>• ประวัติแนวโน้มน้ำหนักตัวย้อนหลัง
+<br>• ช่องลงนามรับรองโดยสัตวแพทย์ผู้ตรวจ
+</p>
+</div>""", unsafe_allow_html=True)
+
+        pdf_doc = generate_clinical_pdf(med_export["cat_info"], med_export["weight_logs"], med_export["reminders"])
+        st.download_button(
+            label=f"📥 ดาวน์โหลด Medical Record PDF ({selected_cat_name})",
+            data=pdf_doc,
+            file_name=f"CatCare_Medical_Record_{selected_cat_name}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+
+    with col_ep2:
+        st.markdown(f"""<div style="background:white;border-radius:18px;padding:1.4rem;border:1.5px solid #E2E8F0;box-shadow:0 4px 16px rgba(0,0,0,0.05);height:100%">
+<div style="font-size:2.2rem;margin-bottom:8px">📊</div>
+<h4 style="margin:0 0 6px;color:#1E293B">Raw Clinical & Expense Data (CSV)</h4>
+<p style="font-size:0.88rem;color:#64748B;line-height:1.6;margin-bottom:14px">
+ส่งออกข้อมูลดิบทั้งหมดเพื่อนำไปประมวลผลต่อ หรือส่งให้คลินิก:
+<br>• รองรับ UTF-8 with BOM เปิดใน <b>Microsoft Excel ภาษาไทยไม่เพี้ยน</b>
+<br>• ข้อมูลการชั่งน้ำหนักและการกินรายวัน
+<br>• ข้อมูลนัดหมายและการฉีดวัคซีน
+<br>• บันทึกค่ารักษาพยาบาลและค่ายาแยกหมวดหมู่
+<br>• เหมาะสำหรับการเคลมประกันสุขภาพสัตว์เลี้ยง
+</p>
+</div>""", unsafe_allow_html=True)
+
+        csv_doc = generate_clinical_csv(med_export["cat_info"], med_export["weight_logs"], med_export["reminders"], med_export["expenses"])
+        st.download_button(
+            label=f"📥 ดาวน์โหลดข้อมูลดิบ CSV ({selected_cat_name})",
+            data=csv_doc.encode("utf-8-sig"),
+            file_name=f"CatCare_Clinical_Data_{selected_cat_name}.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
 

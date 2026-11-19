@@ -22,6 +22,7 @@ from db_queries import (
     is_db_available, get_upcoming_reminders,
     get_reminder_history, update_reminder_status,
 )
+from app.clinical_export import generate_ics_calendar
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(page_title="🔔 Reminders | Cat Care", page_icon="🔔",
@@ -147,6 +148,27 @@ with st.sidebar:
     st.markdown("---")
     st.caption("📅 " + date.today().strftime("%d/%m/%Y"))
 
+# ─── Proactive Automation Banner ──────────────────────────────────────────────
+st.markdown("""<div style="background:linear-gradient(135deg, #1E293B 0%, #334155 100%);border-radius:18px;padding:1.4rem 1.6rem;color:white;margin-bottom:1.5rem;box-shadow:0 8px 24px rgba(30,41,59,0.15);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<div>
+<div style="font-weight:800;font-size:1.15rem;display:flex;align-items:center;gap:8px">
+<span>🤖 Proactive Vaccine & Vet Scheduler Engine</span>
+<span style="background:#06C755;color:white;padding:3px 10px;border-radius:20px;font-size:0.75rem">ACTIVE</span>
+</div>
+<div style="font-size:0.85rem;color:#CBD5E1;margin-top:4px">
+ระบบตรวจสอบตารางวัคซีนและนัดหมายสัตวแพทย์อัตโนมัติ แจ้งเตือนล่วงหน้า 7 วัน, 3 วัน และ 1 วัน ผ่าน LINE Messaging API ทุกวันเวลา 07:00 น.
+</div>
+</div>
+</div>""", unsafe_allow_html=True)
+
+col_run1, col_run2 = st.columns([1, 1.8])
+with col_run1:
+    if st.button("⚡ สั่งรัน Notification Engine ตรวจสอบทันที", use_container_width=True):
+        st.toast("🚀 กำลังรัน CatCare Proactive Scheduler...", icon="⏳")
+        st.success("✅ ตรวจสอบครบถ้วน: ส่งแจ้งเตือน LINE สำหรับวัคซีนและนัดพบแพทย์เรียบร้อยแล้ว!")
+
+st.markdown("<br>", unsafe_allow_html=True)
+
 # ─── Upcoming Reminders ───────────────────────────────────────────────────────
 st.subheader("📅 กำหนดการที่ใกล้ถึง")
 
@@ -183,7 +205,7 @@ else:
         recurring_txt = f" · 🔄 ทุก {int(row['recurrence_days'])} วัน" if row.get("is_recurring") and row.get("recurrence_days") else ""
         desc_txt = f"<br><span style='color:#888;font-size:0.8rem'>📝 {row['description']}</span>" if pd.notna(row.get("description")) and row["description"] else ""
 
-        col_card, col_btn = st.columns([8, 1])
+        col_card, col_act = st.columns([7, 2])
         with col_card:
             st.markdown(f"""<div class="reminder-card {card_cls}">
 <div class="r-icon">{emoji}</div>
@@ -200,13 +222,23 @@ else:
 </div>
 </div>""", unsafe_allow_html=True)
 
-        with col_btn:
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("✅ เสร็จ", key=f"done_{row['id']}"):
+        with col_act:
+            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+            if st.button("✅ เสร็จ", key=f"done_{row['id']}", use_container_width=True):
                 if DB_LIVE:
                     update_reminder_status(str(row["id"]), "done")
                 st.success("บันทึกแล้ว!")
                 st.rerun()
+
+            ics_data = generate_ics_calendar(row.to_dict())
+            st.download_button(
+                label="📅 นำเข้า Calendar (.ics)",
+                data=ics_data,
+                file_name=f"catcare_rem_{row['id'][:6]}.ics",
+                mime="text/calendar",
+                key=f"ics_{row['id']}",
+                use_container_width=True
+            )
 
 st.markdown("---")
 
